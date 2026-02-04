@@ -1,5 +1,8 @@
 {
   "name": "@marginal-card/platform-sdk",
   "version": "1.0.0",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@marginal-card/types": "workspace:*"
+  }
 }

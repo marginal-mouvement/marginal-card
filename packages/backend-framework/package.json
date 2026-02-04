@@ -1,0 +1,17 @@
+{
+  "name": "backend-framework",
+  "version": "1.0.0",
+  "license": "ISC",
+  "exports": {
+    ".": "./src"
+  },
+  "dependencies": {
+    "@ddd-ts/core": "^0.0.35",
+    "@ddd-ts/shape": "^0.0.35",
+    "hono": "^4.11.7"
+  },
+  "devDependencies": {
+    "@ddd-ts/types": "^0.0.35",
+    "@marginal-card/types": "workspace:*"
+  }
+}

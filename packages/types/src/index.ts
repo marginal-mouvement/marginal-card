@@ -1,1 +1,1 @@
-export { Contract } from "./contract";
+export { Contract, RouteOf, MethodOf, PayloadOf, ResultOf } from "./contract";
