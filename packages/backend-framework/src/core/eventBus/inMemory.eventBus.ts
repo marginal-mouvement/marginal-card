@@ -1,7 +1,7 @@
 import { IEvent } from "@ddd-ts/core";
 import { Constructor } from "@ddd-ts/types";
 import { EventBus, EventCallback } from "./eventBus";
-import { parallel } from "../parallel";
+import { parallel } from "../concurrency";
 
 export class InMemoryEventBus implements EventBus {
   private events = new Map<Constructor<IEvent>, Set<EventCallback<IEvent>>>();

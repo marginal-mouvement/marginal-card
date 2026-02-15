@@ -1,5 +1,14 @@
 {
   "name": "@marginal-card/platform-backend",
   "version": "1.0.0",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@ddd-ts/core": "^0.0.35",
+    "@ddd-ts/shape": "^0.0.35",
+    "@marginal-card/backend-framework": "workspace:*",
+    "@marginal-card/loyalty-domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@ddd-ts/store-inmemory": "^0.0.36"
+  }
 }

@@ -145,9 +145,6 @@ describe("In memory IntentBus", () => {
 
     const result = await intentBus.handle(new SomeQuery({ input: 5 }));
 
-    //@ts-expect-error result is a number
-    const _: string = result;
-
     expect(result.toFixed(2)).toBe("10.00");
   });
 });

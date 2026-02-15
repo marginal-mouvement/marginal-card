@@ -1,14 +1,16 @@
 {
-  "name": "backend-framework",
+  "name": "@marginal-card/backend-framework",
   "version": "1.0.0",
   "license": "ISC",
   "exports": {
-    ".": "./src"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@ddd-ts/core": "^0.0.35",
     "@ddd-ts/shape": "^0.0.35",
-    "hono": "^4.11.7"
+    "hono": "^4.11.7",
+    "mongodb": "^7.1.0",
+    "ulid": "^3.0.2"
   },
   "devDependencies": {
     "@ddd-ts/types": "^0.0.35",

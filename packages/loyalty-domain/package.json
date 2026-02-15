@@ -1,0 +1,10 @@
+{
+  "name": "@marginal-card/loyalty-domain",
+  "version": "1.0.0",
+  "license": "ISC",
+  "dependencies": {
+    "@marginal-card/backend-framework": "workspace:*",
+    "@ddd-ts/core": "^0.0.35",
+    "@ddd-ts/shape": "^0.0.35"
+  }
+}
