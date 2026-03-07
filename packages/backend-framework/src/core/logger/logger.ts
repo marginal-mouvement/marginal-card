@@ -1,5 +1,8 @@
-import { Severity, SeveritySymbol } from "./severitySymbol";
-import { Constructor } from "@ddd-ts/types";
+import type { Constructor } from "@ddd-ts/types";
+
+import type { Severity} from "./severitySymbol";
+import { SeveritySymbol } from "./severitySymbol";
+
 
 export class Logger {
   constructor(readonly context: string) {}

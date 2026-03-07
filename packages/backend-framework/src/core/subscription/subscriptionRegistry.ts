@@ -1,23 +1,25 @@
-import {
-  SubscriptionId,
-  SubscriptionIdString,
-} from "../value/values/subscriptionId";
+import type { SubscriptionEvent } from "@marginal-card/types";
 
-export type Topic = string & { _type?: "Topic" };
+import type { SubscriptionId } from "../value";
+import { parallel } from "../concurrency";
 
-type Handler = (message: string) => void;
+type Handler<E extends SubscriptionEvent<any, any>> = (
+  message: E,
+) => Promise<void>;
 
-export class SubscriptionRegistry {
-  private readonly subscriptions = new Map<SubscriptionIdString, Handler>();
-  private readonly topicToSubs = new Map<Topic, Set<SubscriptionIdString>>();
-  private readonly subToTopics = new Map<SubscriptionIdString, Set<Topic>>();
+export class SubscriptionRegistry<
+  T extends { [key: string]: SubscriptionEvent<any, any> },
+> {
+  private readonly subscriptions = new Map<keyof T, Handler<T[keyof T]>>();
+  private readonly topicToSubs = new Map<keyof T, Set<string>>();
+  private readonly subToTopics = new Map<string, Set<keyof T>>();
 
-  registerHandler(id: SubscriptionId, handler: Handler) {
-    this.subscriptions.set(id.toSubscriptionIdString(), handler);
+  registerHandler(id: SubscriptionId, handler: Handler<T[keyof T]>) {
+    this.subscriptions.set(id.serialize(), handler);
   }
 
   unregisterHandler(id: SubscriptionId) {
-    const subscriptionIdString = id.toSubscriptionIdString();
+    const subscriptionIdString = id.serialize();
     this.subscriptions.delete(subscriptionIdString);
     const topics = this.subToTopics.get(subscriptionIdString);
     if (topics) {
@@ -39,8 +41,8 @@ export class SubscriptionRegistry {
     this.subToTopics.delete(subscriptionIdString);
   }
 
-  subscribe(topic: Topic, id: SubscriptionId) {
-    const subscriptionIdString = id.toSubscriptionIdString();
+  subscribe(topic: keyof T, id: SubscriptionId) {
+    const subscriptionIdString = id.serialize();
     const subs = this.topicToSubs.get(topic) ?? new Set();
     subs.add(subscriptionIdString);
     this.topicToSubs.set(topic, subs);
@@ -50,8 +52,8 @@ export class SubscriptionRegistry {
     this.subToTopics.set(subscriptionIdString, topics);
   }
 
-  unsubscribe(topic: Topic, subscriptionId: SubscriptionId) {
-    const subscriptionIdString = subscriptionId.toSubscriptionIdString();
+  unsubscribe(topic: keyof T, subscriptionId: SubscriptionId) {
+    const subscriptionIdString = subscriptionId.serialize();
     const topics = this.subToTopics.get(subscriptionIdString);
 
     if (topics) {
@@ -72,8 +74,11 @@ export class SubscriptionRegistry {
     }
   }
 
-  publish(topics: Topic[], message: string) {
-    const recipients = new Set<SubscriptionIdString>();
+  async publish<TargetedTopics extends keyof T>(
+    topics: Array<TargetedTopics>,
+    event: T[TargetedTopics],
+  ) {
+    const recipients = new Set<string>();
 
     for (const topic of topics) {
       const subs = this.topicToSubs.get(topic);
@@ -81,9 +86,9 @@ export class SubscriptionRegistry {
       for (const id of subs) recipients.add(id);
     }
 
-    for (const id of recipients) {
+    await parallel(recipients, 20, async (id) => {
       const handler = this.subscriptions.get(id);
-      handler?.(message);
-    }
+      await handler?.(event);
+    });
   }
 }

@@ -1,6 +1,8 @@
-import { IEvent } from "@ddd-ts/core";
-import { Constructor } from "@ddd-ts/types";
-import { EventBus, EventCallback } from "./eventBus";
+import type { IEvent } from "@ddd-ts/core";
+import type { Constructor } from "@ddd-ts/types";
+
+import type { EventBus, EventCallback } from "./eventBus";
+
 import { parallel } from "../concurrency";
 
 export class InMemoryEventBus implements EventBus {

@@ -34,6 +34,7 @@ export const ErrorCode = {
   },
 } as const satisfies Record<string, StatusEntry>;
 
+// eslint-disable-next-line ts/no-redeclare
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export const OkCode = {
@@ -43,4 +44,5 @@ export const OkCode = {
   },
 } as const satisfies Record<string, StatusEntry>;
 
+// eslint-disable-next-line ts/no-redeclare
 export type OkCode = (typeof OkCode)[keyof typeof OkCode];

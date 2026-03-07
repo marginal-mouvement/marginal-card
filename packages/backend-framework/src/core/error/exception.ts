@@ -1,5 +1,4 @@
-import { ErrorCode } from "../response";
-import { Response } from "../response";
+import { type ErrorCode, Response } from "../response";
 
 type ExceptionSource = "Domain" | "Infrastructure" | "Application";
 

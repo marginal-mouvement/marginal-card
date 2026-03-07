@@ -1,5 +1,7 @@
+import type { Constructor } from "@ddd-ts/types";
+
 import { MakeErrorBuilder } from "./exception";
-import { Constructor } from "@ddd-ts/types";
+
 import { ErrorCode } from "../response";
 
 export class ApplicationError extends MakeErrorBuilder("Application") {
@@ -18,6 +20,10 @@ export class ApplicationError extends MakeErrorBuilder("Application") {
       ErrorCode.FORBIDDEN,
       `Forbidden: you need to be at least ${expected}, you are ${received}`,
     );
+  }
+
+  static unauthorized(reason: string, cause?: any) {
+    return new this.Class(ErrorCode.UNAUTHORIZED, reason, cause);
   }
 
   static notFound(

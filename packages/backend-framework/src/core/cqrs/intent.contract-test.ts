@@ -1,7 +1,11 @@
 import { Command, CommandHandler, Query, QueryHandler } from "./intent";
 
 class SomeCommand extends Command<number> {
-  constructor(readonly payload: {}) {
+  constructor(
+    readonly payload: {
+      index: number;
+    },
+  ) {
     super();
   }
 }
@@ -14,7 +18,11 @@ class SomeCommandHandler extends CommandHandler(SomeCommand) {
 }
 
 class SomeQuery extends Query<number> {
-  constructor(readonly payload: {}) {
+  constructor(
+    readonly payload: {
+      index: number;
+    },
+  ) {
     super();
   }
 }

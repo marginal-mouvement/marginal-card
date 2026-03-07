@@ -1,6 +1,7 @@
-import { Intent, IntentHandler, IntentResult } from "./intent";
+import type { Intent, IntentHandler, IntentResult } from "./intent";
+import type { IntentBus } from "./intentBus";
+
 import { Logger } from "../logger";
-import { IntentBus } from "./intentBus";
 import { InfrastructureError } from "../error";
 
 export class InMemoryIntentBus implements IntentBus {

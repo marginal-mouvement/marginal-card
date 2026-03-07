@@ -16,7 +16,11 @@ describe("In memory IntentBus", () => {
     const intentBus = new InMemoryIntentBus();
 
     class SomeCommand extends Command {
-      constructor(readonly payload: {}) {
+      constructor(
+        readonly payload: {
+          input: number;
+        },
+      ) {
         super();
       }
     }
@@ -30,7 +34,11 @@ describe("In memory IntentBus", () => {
     }
 
     class SomeQuery extends Query<number> {
-      constructor(readonly payload: {}) {
+      constructor(
+        readonly payload: {
+          input: number;
+        },
+      ) {
         super();
       }
     }
@@ -66,19 +74,39 @@ describe("In memory IntentBus", () => {
     const intentBus = new InMemoryIntentBus();
 
     class SomeCommand extends Command {
-      constructor(readonly payload: {}) {
+      constructor(
+        readonly payload: {
+          input: number;
+        },
+      ) {
         super();
       }
     }
 
     class SomeQuery extends Query<number> {
-      constructor(readonly payload: {}) {
+      constructor(
+        readonly payload: {
+          input: number;
+        },
+      ) {
         super();
       }
     }
 
-    await expect(intentBus.handle(new SomeQuery({}))).rejects.toThrow(Error);
-    await expect(intentBus.handle(new SomeCommand({}))).rejects.toThrow(Error);
+    await expect(
+      intentBus.handle(
+        new SomeQuery({
+          input: 1,
+        }),
+      ),
+    ).rejects.toThrow(Error);
+    await expect(
+      intentBus.handle(
+        new SomeCommand({
+          input: 1,
+        }),
+      ),
+    ).rejects.toThrow(Error);
   });
 
   it("should handle a command", async () => {

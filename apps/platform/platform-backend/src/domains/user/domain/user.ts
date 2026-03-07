@@ -1,7 +1,8 @@
 import { EsAggregate, EsEvent, On } from "@ddd-ts/core";
-import { UserId } from "@marginal-card/backend-framework";
-import { Email } from "./email";
+import { DomainError, UserId } from "@marginal-card/backend-framework";
 import { Optional } from "@ddd-ts/shape";
+
+import { Email } from "./email";
 
 export class UserCreated extends EsEvent("UserCreated", {
   id: UserId,
@@ -10,8 +11,28 @@ export class UserCreated extends EsEvent("UserCreated", {
   referrerId: Optional(UserId),
 }) {}
 
+export class UserBalanceDebited extends EsEvent("UserDebited", {
+  id: UserId,
+  amount: Number,
+  transfer: {
+    label: String,
+    thumbnailUrl: Optional(String),
+    date: Date,
+  },
+}) {}
+
+export class UserBalanceCredited extends EsEvent("UserCredited", {
+  id: UserId,
+  amount: Number,
+  transfer: {
+    label: String,
+    thumbnailUrl: Optional(String),
+    date: Date,
+  },
+}) {}
+
 export class User extends EsAggregate("User", {
-  events: [UserCreated],
+  events: [UserCreated, UserBalanceDebited, UserBalanceCredited],
   state: {
     id: UserId,
     name: String,
@@ -38,5 +59,69 @@ export class User extends EsAggregate("User", {
       email: event.payload.email,
       balance: 0,
     });
+  }
+
+  debit(
+    amount: number,
+    at: Date,
+    transfer: {
+      label: string;
+      thumbnailUrl?: string;
+    },
+  ) {
+    if (amount <= 0) {
+      throw DomainError.malformed("amount", "must be positive");
+    }
+
+    if (this.balance - amount < 0) {
+      throw DomainError.forbidden("insufficient balance");
+    }
+
+    this.apply(
+      UserBalanceDebited.new({
+        id: this.id,
+        amount,
+        transfer: {
+          label: transfer.label,
+          thumbnailUrl: transfer.thumbnailUrl,
+          date: at,
+        },
+      }),
+    );
+  }
+
+  @On(UserBalanceDebited)
+  protected onUserDebited(event: UserBalanceDebited) {
+    this.balance -= event.payload.amount;
+  }
+
+  credit(
+    amount: number,
+    at: Date,
+    transfer: {
+      label: string;
+      thumbnailUrl?: string;
+    },
+  ) {
+    if (amount <= 0) {
+      throw DomainError.malformed("amount", "must be positive");
+    }
+
+    this.apply(
+      UserBalanceCredited.new({
+        id: this.id,
+        amount,
+        transfer: {
+          label: transfer.label,
+          thumbnailUrl: transfer.thumbnailUrl,
+          date: at,
+        },
+      }),
+    );
+  }
+
+  @On(UserBalanceCredited)
+  protected onUserCredited(event: UserBalanceCredited) {
+    this.balance += event.payload.amount;
   }
 }

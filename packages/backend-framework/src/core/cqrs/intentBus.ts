@@ -1,4 +1,4 @@
-import { Intent, IntentHandler, IntentResult } from "./intent";
+import type { Intent, IntentHandler, IntentResult } from "./intent";
 
 export interface IntentBus {
   register(handler: IntentHandler<any>): void;

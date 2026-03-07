@@ -38,7 +38,9 @@ describe("parallel", () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
         throw undefined;
       });
-    } catch (e) {}
+    } catch (e) {
+      void e;
+    }
 
     expect(result).toEqual([2, 4, 6]);
   });

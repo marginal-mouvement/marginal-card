@@ -1,69 +1,96 @@
-import { SubscriptionRegistry, Topic } from "./subscriptionRegistry";
-import { SubscriptionId } from "../value";
-import { UserId } from "../value";
+import type { SubscriptionEvent } from "@marginal-card/types";
+
+import { SubscriptionRegistry } from "./subscriptionRegistry";
+
+import { SubscriptionId , UserId } from "../value";
+
+type TestTopics = "orders" | "alerts" | "news";
+
+type TestEvent = SubscriptionEvent<
+  "Test",
+  {
+    hi: string;
+  }
+>;
 
 describe("SubscriptionRegistry", () => {
-  const topic = (s: string) => s as Topic;
-
   it("delivers message to registered handler for subscribed topic", () => {
-    const registry = new SubscriptionRegistry();
+    const registry = new SubscriptionRegistry<TestEvent, TestTopics>();
     const user = UserId.generate();
     const subId = SubscriptionId.for(user);
     const handler = jest.fn();
 
     registry.registerHandler(subId, handler);
-    registry.subscribe(topic("orders"), subId);
+    registry.subscribe("orders", subId);
 
-    registry.publish([topic("orders")], "hello");
+    const evt = {
+      at: new Date(),
+      name: "Test" as const,
+      payload: { hi: "hello" },
+    };
+
+    registry.publish(["orders"], evt);
 
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler).toHaveBeenCalledWith("hello");
+    expect(handler).toHaveBeenCalledWith(evt);
   });
 
   it("deduplicates deliveries when publishing multiple topics with same subscriber", () => {
-    const registry = new SubscriptionRegistry();
+    const registry = new SubscriptionRegistry<TestEvent, TestTopics>();
     const user = UserId.generate();
     const subId = SubscriptionId.for(user);
     const handler = jest.fn();
 
     registry.registerHandler(subId, handler);
-    registry.subscribe(topic("alerts"), subId);
-    registry.subscribe(topic("news"), subId);
+    registry.subscribe("alerts", subId);
+    registry.subscribe("news", subId);
 
-    registry.publish([topic("alerts"), topic("news")], "ping");
+    const evt = {
+      at: new Date(),
+      name: "Test" as const,
+      payload: { hi: "ping" },
+    };
+
+    registry.publish(["news", "alerts"], evt);
 
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler).toHaveBeenCalledWith("ping");
+    expect(handler).toHaveBeenCalledWith(evt);
   });
 
   it("unsubscribe stops delivery for that topic but keeps other topics active", () => {
-    const registry = new SubscriptionRegistry();
+    const registry = new SubscriptionRegistry<TestEvent, TestTopics>();
     const user = UserId.generate();
     const subId = SubscriptionId.for(user);
     const handler = jest.fn();
 
     registry.registerHandler(subId, handler);
-    registry.subscribe(topic("a"), subId);
-    registry.subscribe(topic("b"), subId);
+    registry.subscribe("news", subId);
+    registry.subscribe("alerts", subId);
 
-    registry.publish([topic("a")], "m1");
+    const evt = {
+      at: new Date(),
+      name: "Test" as const,
+      payload: { hi: "ping" },
+    };
+
+    registry.publish(["news"], evt);
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler).toHaveBeenLastCalledWith("m1");
+    expect(handler).toHaveBeenLastCalledWith(evt);
 
     handler.mockClear();
 
-    registry.unsubscribe(topic("a"), subId);
+    registry.unsubscribe("news", subId);
 
-    registry.publish([topic("a")], "m2");
+    registry.publish(["news"], evt);
     expect(handler).not.toHaveBeenCalled();
 
-    registry.publish([topic("b")], "m3");
+    registry.publish(["alerts"], evt);
     expect(handler).toHaveBeenCalledTimes(1);
-    expect(handler).toHaveBeenLastCalledWith("m3");
+    expect(handler).toHaveBeenLastCalledWith(evt);
   });
 
   it("unregistering a handler prevents further deliveries for that subscriber, others unaffected", () => {
-    const registry = new SubscriptionRegistry();
+    const registry = new SubscriptionRegistry<TestEvent, TestTopics>();
 
     const user1 = UserId.generate();
     const sub1 = SubscriptionId.for(user1);
@@ -76,25 +103,37 @@ describe("SubscriptionRegistry", () => {
     registry.registerHandler(sub1, h1);
     registry.registerHandler(sub2, h2);
 
-    registry.subscribe(topic("t1"), sub1);
-    registry.subscribe(topic("t1"), sub2);
+    registry.subscribe("orders", sub1);
+    registry.subscribe("orders", sub2);
 
     registry.unregisterHandler(sub1);
 
-    registry.publish([topic("t1")], "x");
+    const evt = {
+      at: new Date(),
+      name: "Test" as const,
+      payload: { hi: "ping" },
+    };
+
+    registry.publish(["orders"], evt);
 
     expect(h1).not.toHaveBeenCalled();
     expect(h2).toHaveBeenCalledTimes(1);
-    expect(h2).toHaveBeenCalledWith("x");
+    expect(h2).toHaveBeenCalledWith(evt);
   });
 
   it("does nothing (no throw) if a subscribed id has no registered handler", () => {
-    const registry = new SubscriptionRegistry();
+    const registry = new SubscriptionRegistry<TestEvent, TestTopics>();
     const user = UserId.generate();
     const subId = SubscriptionId.for(user);
 
-    registry.subscribe(topic("ghost"), subId);
+    registry.subscribe("alerts", subId);
 
-    expect(() => registry.publish([topic("ghost")], "boo")).not.toThrow();
+    const evt = {
+      at: new Date(),
+      name: "Test" as const,
+      payload: { hi: "ping" },
+    };
+
+    expect(() => registry.publish(["alerts"], evt)).not.toThrow();
   });
 });

@@ -1,4 +1,5 @@
-import { ErrorCode, OkCode } from "./code";
+import type { ErrorCode} from "./code";
+import { OkCode } from "./code";
 
 export class Response<D> {
   constructor(

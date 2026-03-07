@@ -1,0 +1,11 @@
+{
+  "name": "@marginal-card/sdk",
+  "version": "1.0.0",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@marginal-card/types": "workspace:*"
+  }
+}

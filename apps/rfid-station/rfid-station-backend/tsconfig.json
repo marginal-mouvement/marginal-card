@@ -1,3 +1,10 @@
 {
-  "extends": "../../../tsconfig.base.json"
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@tockawa/nfc-pcsc": [
+        "./node_modules/@tockawa/nfc-pcsc/dist/types/src/index.d.ts"
+      ]
+    }
+  }
 }

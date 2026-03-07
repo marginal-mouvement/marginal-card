@@ -1,4 +1,4 @@
-import { Constructor } from "@ddd-ts/types";
+import type { Constructor } from "@ddd-ts/types";
 
 export abstract class Intent<R> {
   private readonly _result!: R;

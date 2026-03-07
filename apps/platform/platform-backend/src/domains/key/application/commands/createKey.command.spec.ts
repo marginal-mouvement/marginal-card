@@ -1,9 +1,12 @@
 import { InMemoryDatabase } from "@ddd-ts/store-inmemory";
-import { InMemoryKeyStore } from "../../infrastructure/inMemory.key.store";
-import { CreateKeyCommand, CreateKeyCommandHandler } from "./createKey.command";
-import { Actor } from "../../../actor/domain/actor";
-import { Permission } from "../../../actor/domain/grade";
 import { ApplicationError } from "@marginal-card/backend-framework";
+
+import { CreateKeyCommand, CreateKeyCommandHandler } from "./createKey.command";
+
+import { InMemoryKeyStore } from "../../infra/inMemory.key.store";
+import { Actor } from "../../../auth/domain/actor";
+import { Permission } from "../../../auth/domain/permission";
+
 
 describe("CreateKeyCommand", () => {
   function createHandler() {

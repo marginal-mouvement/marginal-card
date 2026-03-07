@@ -1,8 +1,9 @@
+import type { KeyId } from "@marginal-card/backend-framework";
 import { Command, CommandHandler } from "@marginal-card/backend-framework";
-import { KeyId } from "../../domain/keyId";
-import { Actor } from "../../../actor/domain/actor";
+
+import type { Actor } from "../../../auth/domain/actor";
 import { Key } from "../../domain/key";
-import { KeyStore } from "../key.store";
+import type { KeyStore } from "../key.store";
 
 export class CreateKeyCommand extends Command<{ id: KeyId }> {
   constructor(

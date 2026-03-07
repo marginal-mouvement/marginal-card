@@ -1,7 +1,11 @@
-import { InfrastructureError, Logger, TransactionPerformer } from "../../core";
-import { ClientSession, Db, MongoClient } from "mongodb";
-import { TransactionEffect } from "../../core/store/transaction";
+import type { ClientSession, Db, MongoClient } from "mongodb";
+
 import { MongoTransaction } from "./mongo.transaction";
+
+import type { TransactionPerformer } from "../../core";
+import { InfrastructureError, Logger } from "../../core";
+import type { TransactionEffect } from "../../core/store/transaction";
+
 
 function hasLabel(err: unknown, label: string): boolean {
   const anyErr = err as any;

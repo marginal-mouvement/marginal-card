@@ -1,5 +1,5 @@
-import { IEvent } from "@ddd-ts/core";
-import { Constructor } from "@ddd-ts/types";
+import type { IEvent } from "@ddd-ts/core";
+import type { Constructor } from "@ddd-ts/types";
 
 export type EventCallback<T extends IEvent> = (
   event: T,

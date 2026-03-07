@@ -1,1 +1,1 @@
-export { Serializer } from "./serializer";
+export type { Serializer } from "./serializer";

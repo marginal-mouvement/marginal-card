@@ -1,4 +1,5 @@
 import { MakeErrorBuilder } from "./exception";
+
 import { ErrorCode } from "../response";
 
 export class InfrastructureError extends MakeErrorBuilder("Infrastructure") {

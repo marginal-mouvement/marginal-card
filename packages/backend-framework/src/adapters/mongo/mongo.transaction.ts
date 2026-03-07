@@ -1,5 +1,6 @@
-import { Transaction } from "../../core";
-import { ClientSession } from "mongodb";
+import type { ClientSession } from "mongodb";
+
+import type { Transaction } from "../../core";
 
 export class MongoTransaction implements Transaction {
   private readonly commitCallbacks: (() => Promise<void>)[] = [];

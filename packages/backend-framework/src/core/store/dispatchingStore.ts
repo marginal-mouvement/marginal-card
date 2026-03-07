@@ -1,8 +1,10 @@
-import { IEventSourced, IIdentifiable } from "@ddd-ts/core";
-import { Constructor } from "@ddd-ts/types";
-import { Store } from "./store";
-import { EventBus } from "../eventBus";
-import { Transaction } from "./transaction";
+import type { IEventSourced, IIdentifiable } from "@ddd-ts/core";
+import type { Constructor } from "@ddd-ts/types";
+
+import type { Store } from "./store";
+import type { Transaction } from "./transaction";
+
+import type { EventBus } from "../eventBus";
 
 export function DispatchingStore<
   const M extends IIdentifiable & IEventSourced,

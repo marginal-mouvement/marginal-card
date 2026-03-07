@@ -1,13 +1,15 @@
+import type {
+  KeyId,
+  TransactionPerformer} from "@marginal-card/backend-framework";
 import {
   ApplicationError,
   Command,
-  CommandHandler,
-  TransactionPerformer,
+  CommandHandler
 } from "@marginal-card/backend-framework";
-import { Email } from "../../domain/email";
-import { KeyId } from "../../../key/domain/keyId";
-import { UserStore } from "../user.store";
-import { KeyStore } from "../../../key/application/key.store";
+
+import type { Email } from "../../domain/email";
+import type { UserStore } from "../user.store";
+import type { KeyStore } from "../../../key/application/key.store";
 import { User } from "../../domain/user";
 import { Key } from "../../../key/domain/key";
 

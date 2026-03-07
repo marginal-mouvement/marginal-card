@@ -8,7 +8,6 @@ export async function parallel<T>(
   const errors: { error: Error; item: T }[] = [];
   const running: Promise<any>[] = [];
   let index = 0;
-  let awaitedCount = 0;
 
   for await (const result of iterable) {
     while (running.length >= concurrency) {
@@ -36,7 +35,6 @@ export async function parallel<T>(
         });
       })
       .finally(() => {
-        awaitedCount += 1;
         void running.splice(running.indexOf(promise), 1);
       });
 

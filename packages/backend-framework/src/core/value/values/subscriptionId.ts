@@ -1,10 +1,9 @@
-import { Id } from "../id";
 import { UserId } from "./userId";
+
+import { Id } from "../id";
 import { ApplicationError } from "../../error";
 
 class ChannelId extends Id("sub") {}
-
-export type SubscriptionIdString = string & { _type?: "SubscriptionId" };
 
 export class SubscriptionId {
   constructor(
@@ -23,10 +22,6 @@ export class SubscriptionId {
   static deserialize(serialized: string) {
     const [userId, channelId] = serialized.split("@");
     return new SubscriptionId(UserId.parse(userId), ChannelId.parse(channelId));
-  }
-
-  toSubscriptionIdString() {
-    return this.serialize() as SubscriptionIdString;
   }
 
   static parse(serialized: unknown) {

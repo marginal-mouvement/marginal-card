@@ -1,5 +1,6 @@
-import { InMemoryEventBus } from "./inMemory.eventBus";
 import { EsEvent } from "@ddd-ts/core";
+
+import { InMemoryEventBus } from "./inMemory.eventBus";
 
 describe("In memory EventBus", () => {
   class TestEvent extends EsEvent("TestEvent", {

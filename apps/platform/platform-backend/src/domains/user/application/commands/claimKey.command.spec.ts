@@ -2,14 +2,16 @@ import {
   InMemoryDatabase,
   InMemoryTransactionPerformer,
 } from "@ddd-ts/store-inmemory";
-import { InMemoryUserStore } from "../../infrastructure/inMemory.user.store";
-import { InMemoryKeyStore } from "../../../key/infrastructure/inMemory.key.store";
+import { ApplicationError, KeyId } from "@marginal-card/backend-framework";
+
 import { ClaimKeyCommand, ClaimKeyCommandHandler } from "./claimKey.command";
+
+import { InMemoryUserStore } from "../../infra/inMemory.user.store";
+import { InMemoryKeyStore } from "../../../key/infra/inMemory.key.store";
 import { Email } from "../../domain/email";
-import { KeyId } from "../../../key/domain/keyId";
 import { Key } from "../../../key/domain/key";
 import { User } from "../../domain/user";
-import { ApplicationError } from "@marginal-card/backend-framework";
+
 
 describe("ClaimKeyCommand", () => {
   function createHandler() {

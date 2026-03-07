@@ -1,4 +1,5 @@
-import { Store } from "@marginal-card/backend-framework";
-import { Key } from "../domain/key";
+import type { Store } from "@marginal-card/backend-framework";
+
+import type { Key } from "../domain/key";
 
 export type KeyStore = Store<Key>;

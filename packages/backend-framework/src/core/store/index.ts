@@ -1,3 +1,3 @@
-export { Store } from "./store";
-export { Transaction, TransactionPerformer } from "./transaction";
+export type { Store } from "./store";
+export type { Transaction, TransactionPerformer } from "./transaction";
 export { DispatchingStore } from "./dispatchingStore";
