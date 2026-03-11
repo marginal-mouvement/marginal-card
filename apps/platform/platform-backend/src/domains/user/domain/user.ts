@@ -1,14 +1,17 @@
 import { EsAggregate, EsEvent, On } from "@ddd-ts/core";
 import { DomainError, UserId } from "@marginal-card/backend-framework";
-import { Optional } from "@ddd-ts/shape";
+import { Multiple, Optional } from "@ddd-ts/shape";
 
 import { Email } from "./email";
+
+import { ShowId } from "../../show/domain/showId";
 
 export class UserCreated extends EsEvent("UserCreated", {
   id: UserId,
   name: String,
   email: Email,
   referrerId: Optional(UserId),
+  duringShow: Optional(ShowId),
 }) {}
 
 export class UserBalanceDebited extends EsEvent("UserDebited", {
@@ -38,25 +41,41 @@ export class User extends EsAggregate("User", {
     name: String,
     email: Email,
     balance: Number,
+    visitedShows: Multiple(ShowId),
+    emailConfirmed: Boolean,
   },
 }) {
-  static create(name: string, email: Email, referrerId?: UserId) {
+  static create({
+    name,
+    email,
+    referrerId,
+    duringShow,
+  }: {
+    name: string;
+    email: Email;
+    referrerId?: UserId;
+    duringShow?: ShowId;
+  }) {
     return this.new(
       UserCreated.new({
         id: UserId.generate(),
         name,
         email,
         referrerId,
+        duringShow,
       }),
     );
   }
 
   @On(UserCreated)
   private static onUserCreated(event: UserCreated) {
+    const duringShow = event.payload.duringShow;
     return new User({
       id: event.payload.id,
       name: event.payload.name,
       email: event.payload.email,
+      visitedShows: duringShow ? [duringShow] : [],
+      emailConfirmed: false,
       balance: 0,
     });
   }

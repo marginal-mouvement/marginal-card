@@ -18,4 +18,8 @@ export class DomainError extends MakeErrorBuilder("Domain") {
   static forbidden(beacause: string) {
     return new this.Class(ErrorCode.FORBIDDEN, `Forbidden: ${beacause}`);
   }
+
+  static conflict(reason: string) {
+    return new this.Class(ErrorCode.CONFLICT, reason);
+  }
 }

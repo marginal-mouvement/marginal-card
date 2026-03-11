@@ -1,8 +1,7 @@
 import type { Constructor } from "@ddd-ts/types";
 
-import type { Severity} from "./severitySymbol";
+import type { Severity } from "./severitySymbol";
 import { SeveritySymbol } from "./severitySymbol";
-
 
 export class Logger {
   constructor(readonly context: string) {}
@@ -44,7 +43,7 @@ export class Logger {
     this.print("warn", message, more);
   };
 
-  public error = (err: any) => {
+  public error = (...err: any[]) => {
     this.print("error", err);
   };
 }

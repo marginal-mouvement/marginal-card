@@ -5,10 +5,12 @@ import {
   NodeDatetimeService,
 } from "@marginal-card/backend-framework";
 
-import { bootKey } from "../domains/key/application/boot/bootKey";
 import { db } from "../infra/db";
 import { bootUser } from "../domains/user/boot/bootUser";
 import { bootAuth } from "../domains/auth/boot/bootAuth";
+import { bootKey } from "../domains/key/boot/bootKey";
+import { bootShow } from "../domains/show/boot/bootShow";
+import { bootTransfer } from "../domains/transfer/boot/bootTransfer";
 
 export function globalBoot() {
   const intentBus = new InMemoryIntentBus();
@@ -16,7 +18,9 @@ export function globalBoot() {
   const eventBus = new InMemoryEventBus();
   const transactionPerformer = new MongoTransactionPerformer(db);
 
-  const { keyStore } = bootKey(db, intentBus);
+  const { showStore } = bootShow(db, intentBus);
+
+  const { keyStore } = bootKey(db, intentBus, transactionPerformer, showStore);
 
   bootUser(
     intentBus,
@@ -24,8 +28,11 @@ export function globalBoot() {
     transactionPerformer,
     eventBus,
     dateTimeService,
+    showStore,
     db,
   );
+
+  bootTransfer(db, intentBus, eventBus);
 
   const { authenticator } = bootAuth(db, keyStore, dateTimeService);
 

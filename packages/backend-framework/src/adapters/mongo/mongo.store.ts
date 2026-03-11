@@ -16,6 +16,16 @@ export class MongoStore<T extends IIdentifiable> implements Store<T> {
     return this.db.collection<{ _id: string }>(this.collectionName);
   }
 
+  async find(query?: Filter<{ _id: string }>, transaction?: MongoTransaction) {
+    const docs = await this.collection
+      .find(query ?? {}, {
+        session: transaction?.session,
+      })
+      .toArray();
+
+    return docs.map(this.serializer.deserialize);
+  }
+
   async findOne(
     query: Filter<{ _id: string }>,
     transaction?: MongoTransaction,

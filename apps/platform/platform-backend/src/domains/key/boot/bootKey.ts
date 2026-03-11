@@ -1,0 +1,24 @@
+import type { Db } from "mongodb";
+import type {
+  InMemoryIntentBus,
+  MongoTransactionPerformer,
+} from "@marginal-card/backend-framework";
+
+import { MongoKeyStore } from "../infra/mongo.key.store";
+import { CreateKeyCommandHandler } from "../application/commands/createKey.command";
+import type { MongoShowStore } from "../../show/infra/mongo.show.store";
+
+export function bootKey(
+  db: Db,
+  intentBus: InMemoryIntentBus,
+  transactionPerformer: MongoTransactionPerformer,
+  showStore: MongoShowStore,
+) {
+  const keyStore = new MongoKeyStore(db);
+
+  intentBus.register(
+    new CreateKeyCommandHandler(keyStore, showStore, transactionPerformer),
+  );
+
+  return { keyStore };
+}

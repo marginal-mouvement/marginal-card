@@ -25,5 +25,8 @@
     "typescript-eslint": "^8.53.0",
     "workspace-tools": "^0.40.4"
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.28.2",
+  "dependencies": {
+    "prettier-plugin-tailwindcss": "^0.7.2"
+  }
 }

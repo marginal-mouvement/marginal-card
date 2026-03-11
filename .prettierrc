@@ -2,5 +2,14 @@
   "useTabs": false,
   "singleQuote": false,
   "semi": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": ["**/*frontend/**/*.ts", "**/*.tsx"],
+      "options": {
+        "tailwindStylesheet": "src/index.css",
+        "tailwindFunctions": ["cn", "cva"]
+      }
+    }
+  ]
 }

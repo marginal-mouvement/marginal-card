@@ -1,0 +1,14 @@
+{
+  "name": "@marginal-card/station-sdk",
+  "version": "1.0.0",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@marginal-card/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@marginal-card/types": "workspace:*"
+  }
+}

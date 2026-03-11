@@ -1,10 +1,9 @@
-import type {
-  KeyId,
-  TransactionPerformer} from "@marginal-card/backend-framework";
 import {
+  type KeyId,
+  type TransactionPerformer,
   ApplicationError,
   Command,
-  CommandHandler
+  CommandHandler,
 } from "@marginal-card/backend-framework";
 
 import type { Email } from "../../domain/email";
@@ -13,7 +12,7 @@ import type { KeyStore } from "../../../key/application/key.store";
 import { User } from "../../domain/user";
 import { Key } from "../../../key/domain/key";
 
-export class ClaimKeyCommand extends Command {
+export class ClaimKeyCommand extends Command<User> {
   constructor(
     readonly payload: {
       email: Email;
@@ -48,14 +47,12 @@ export class ClaimKeyCommandHandler extends CommandHandler(ClaimKeyCommand) {
       }
     }
 
-    const existingName = await this.userStore.loadByName(name);
+    return await this.transactionPerformer.perform(async (transaction) => {
+      const existingName = await this.userStore.loadByName(name, transaction);
 
-    if (existingName) {
-      throw ApplicationError.conflict(`Name "${name}" taken`);
-    }
-
-    await this.transactionPerformer.perform(async (transaction) => {
-      const user = User.create(name, email, referrer?.id);
+      if (existingName) {
+        throw ApplicationError.conflict(`Name "${name}" taken`);
+      }
 
       const key = await this.keyStore.load(keyId, transaction);
 
@@ -63,10 +60,19 @@ export class ClaimKeyCommandHandler extends CommandHandler(ClaimKeyCommand) {
         throw ApplicationError.notFound(Key, keyId);
       }
 
+      const user = User.create({
+        name,
+        email,
+        referrerId: referrer?.id,
+        duringShow: key.showId,
+      });
+
       key.assign(user.id);
 
       await this.userStore.save(user, transaction);
       await this.keyStore.save(key, transaction);
+
+      return user;
     });
   }
 }

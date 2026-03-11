@@ -1,10 +1,5 @@
-import type {
-  DatetimeService,
-  KeyId} from "@marginal-card/backend-framework";
-import {
-  ApplicationError,
-  UserId,
-} from "@marginal-card/backend-framework";
+import type { DatetimeService, KeyId } from "@marginal-card/backend-framework";
+import { ApplicationError, UserId } from "@marginal-card/backend-framework";
 
 import type { RequestContext } from "./requestContext";
 import type { SessionStore } from "./session.store";
@@ -49,7 +44,11 @@ export class Authenticator {
 
     session.ensureIsUsable(now);
 
-    return new Actor(session.userId ?? UserId.platform(), session.permission);
+    return new Actor(
+      session.userId ?? UserId.platform(),
+      session.permission,
+      "session",
+    );
   }
 
   async authenticateViaKey(keyId: KeyId) {
@@ -63,6 +62,6 @@ export class Authenticator {
       throw ApplicationError.unauthorized("Key is not assigned to a user");
     }
 
-    return new Actor(key.ownerId, Permission.basic());
+    return new Actor(key.ownerId, Permission.basic(), "keyId");
   }
 }

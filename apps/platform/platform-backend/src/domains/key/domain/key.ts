@@ -1,4 +1,4 @@
-import { KeyId, UserId } from "@marginal-card/backend-framework";
+import { DomainError, KeyId, UserId } from "@marginal-card/backend-framework";
 import { Optional, Shape } from "@ddd-ts/shape";
 
 import { ShowId } from "../../show/domain/showId";
@@ -8,15 +8,19 @@ export class Key extends Shape({
   ownerId: Optional(UserId),
   showId: Optional(ShowId),
 }) {
-  static create() {
+  static create(showId?: ShowId) {
     return new Key({
       id: KeyId.generate(),
       ownerId: undefined,
-      showId: undefined,
+      showId: showId,
     });
   }
 
   assign(ownerId: UserId) {
+    if (this.ownerId) {
+      throw DomainError.conflict("Key already claimed");
+    }
+
     this.ownerId = ownerId;
   }
 }

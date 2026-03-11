@@ -1,0 +1,19 @@
+{
+  "name": "@marginal-card/station-backend",
+  "version": "1.0.0",
+  "license": "ISC",
+  "scripts": {
+    "dev": "nodemon src/server.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.11",
+    "@marginal-card/backend-framework": "workspace:*",
+    "@tockawa/nfc-pcsc": "^0.9.3",
+    "hono": "^4.12.5",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@marginal-card/station-sdk": "workspace:*",
+    "@marginal-card/types": "workspace:*"
+  }
+}

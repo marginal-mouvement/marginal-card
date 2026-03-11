@@ -3,6 +3,7 @@ import { UserId } from "@marginal-card/backend-framework";
 
 import { User } from "../domain/user";
 import { Email } from "../domain/email";
+import { ShowId } from "../../show/domain/showId";
 
 export class MongoUserSerializer implements ISerializer<User> {
   serialize(value: User) {
@@ -12,6 +13,8 @@ export class MongoUserSerializer implements ISerializer<User> {
       name: value.name,
       email: value.email.serialize(),
       balance: value.balance,
+      visitedShows: value.visitedShows.map((show) => show.serialize()),
+      emailConfirmed: value.emailConfirmed,
     };
   }
 
@@ -21,6 +24,10 @@ export class MongoUserSerializer implements ISerializer<User> {
       name: value.name,
       email: Email.deserialize(value.email),
       balance: value.balance,
+      visitedShows: value.visitedShows.map((showId) =>
+        ShowId.deserialize(showId),
+      ),
+      emailConfirmed: value.emailConfirmed,
     });
   }
 }

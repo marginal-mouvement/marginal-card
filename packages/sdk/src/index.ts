@@ -1,9 +1,11 @@
 import type {
   Contract,
+  HandshakeSubscriptionEvent,
   MethodOf,
   PayloadOf,
   ResultOf,
   RouteOf,
+  SubscriptionEvent,
 } from "@marginal-card/types";
 
 interface ServerError {
@@ -29,11 +31,14 @@ export class ApiServerError extends Error {
   }
 }
 
-export class SDK {
-  constructor(
-    private readonly baseUrl: string,
-    private apiKey?: string,
-  ) {}
+export class SDK<
+  T extends { [key: string]: SubscriptionEvent<any, any> } = any,
+> {
+  private subscriptionId: string | undefined;
+  private apiKey?: string;
+  private keyId?: string;
+
+  constructor(private readonly baseUrl: string) {}
 
   async fetch<T extends Contract<any, any, any, any>>(
     route: RouteOf<T>,
@@ -52,8 +57,15 @@ export class SDK {
       };
     }
 
+    if (this.keyId) {
+      headers = {
+        ...headers,
+        "X-KEY-ID": this.keyId,
+      };
+    }
+
     const response: OkResponse<ResultOf<T>> | ServerError = await fetch(
-      `${this.baseUrl}/${route}`,
+      `${this.baseUrl}${route}`,
       {
         method,
         body: payload ? JSON.stringify(payload) : undefined,
@@ -72,7 +84,36 @@ export class SDK {
     return response.data;
   }
 
-  setApiKey(apiKey: string) {
+  subscribeToEvents(
+    callback: (event: T[keyof T] | HandshakeSubscriptionEvent) => void,
+  ) {
+    const eventSource = new EventSource(`${this.baseUrl}/events`, {
+      withCredentials: true,
+    });
+
+    eventSource.onmessage = (e) => {
+      const event = JSON.parse(e.data) as
+        | T[keyof T]
+        | HandshakeSubscriptionEvent;
+
+      if (event.name === "Handshake") {
+        this.subscriptionId = event.payload.subscriptionId;
+        return;
+      }
+
+      callback(event);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }
+
+  setApiKey(apiKey?: string) {
     this.apiKey = apiKey;
+  }
+
+  setKeyId(keyId?: string) {
+    this.keyId = keyId;
   }
 }

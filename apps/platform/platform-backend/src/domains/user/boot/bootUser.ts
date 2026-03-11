@@ -11,6 +11,9 @@ import type { MongoKeyStore } from "../../key/infra/mongo.key.store";
 import { MongoUserStore } from "../infra/mongo.userStore";
 import { CreditUserBalanceCommandHandler } from "../application/commands/creditUserBalance.command";
 import { DebitUserBalanceCommandHandler } from "../application/commands/debitUserBalance.command";
+import { UserSaga } from "../application/user.saga";
+import type { MongoShowStore } from "../../show/infra/mongo.show.store";
+import { MeQueryHandler } from "../application/queries/me.query";
 
 export function bootUser(
   intentBus: InMemoryIntentBus,
@@ -18,6 +21,7 @@ export function bootUser(
   transactionPerformer: MongoTransactionPerformer,
   eventBus: InMemoryEventBus,
   dateTimeService: NodeDatetimeService,
+  showStore: MongoShowStore,
   db: Db,
 ) {
   const userStore = new MongoUserStore(db).publishAggregateEventsTo(eventBus);
@@ -41,6 +45,10 @@ export function bootUser(
       dateTimeService,
     ),
   );
+
+  intentBus.register(new MeQueryHandler(userStore));
+
+  new UserSaga(intentBus, showStore).listen(eventBus);
 
   return { userStore };
 }
