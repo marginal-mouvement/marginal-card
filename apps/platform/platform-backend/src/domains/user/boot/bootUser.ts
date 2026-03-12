@@ -14,6 +14,7 @@ import { DebitUserBalanceCommandHandler } from "../application/commands/debitUse
 import { UserSaga } from "../application/user.saga";
 import type { MongoShowStore } from "../../show/infra/mongo.show.store";
 import { MeQueryHandler } from "../application/queries/me.query";
+import { UserByKeyQueryHandler } from "../application/queries/userByKey.query";
 
 export function bootUser(
   intentBus: InMemoryIntentBus,
@@ -47,6 +48,8 @@ export function bootUser(
   );
 
   intentBus.register(new MeQueryHandler(userStore));
+
+  intentBus.register(new UserByKeyQueryHandler(keyStore, userStore));
 
   new UserSaga(intentBus, showStore).listen(eventBus);
 

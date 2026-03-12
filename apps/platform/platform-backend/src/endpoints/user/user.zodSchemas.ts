@@ -14,3 +14,14 @@ export const claimKeySchema = z.object({
   keyId: z.string(),
   refererName: username.optional(),
 });
+
+export const userByKeySchema = z.object({
+  keyId: z.string(),
+});
+
+export const transactionSchema = z.object({
+  userId: z.string(),
+  amount: z.number().positive(),
+  label: z.string(),
+  thumbnailUrl: z.url().optional(),
+});

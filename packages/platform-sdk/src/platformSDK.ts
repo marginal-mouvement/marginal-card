@@ -2,7 +2,13 @@ import { SDK } from "@marginal-card/sdk";
 import type { PayloadOf } from "@marginal-card/types";
 
 import type { CreateKeyContract, IsKeyAvailableContract } from "./key";
-import type { ClaimKeyContract, MeContract } from "./user";
+import type {
+  ClaimKeyContract,
+  CreditUserContract,
+  DebitUserContract,
+  MeContract,
+  UserByKeyContract,
+} from "./user";
 import type { AllShowsContract, CreateShowContract } from "./show";
 import type { AllMyTransfersContract } from "./transfer";
 
@@ -33,6 +39,18 @@ class UserService {
 
   me() {
     return this.sdk.fetch<MeContract>("/user/me", "GET", undefined);
+  }
+
+  byKey(keyId: string) {
+    return this.sdk.fetch<UserByKeyContract>("/user/by-key", "POST", { keyId });
+  }
+
+  debit(payload: PayloadOf<DebitUserContract>) {
+    return this.sdk.fetch<DebitUserContract>("/user/debit", "POST", payload);
+  }
+
+  credit(payload: PayloadOf<CreditUserContract>) {
+    return this.sdk.fetch<CreditUserContract>("/user/credit", "POST", payload);
   }
 }
 

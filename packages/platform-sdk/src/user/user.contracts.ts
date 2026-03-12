@@ -15,3 +15,36 @@ export type ClaimKeyContract = Contract<
 >;
 
 export type MeContract = Contract<"/user/me", "GET", undefined, SimpleUser>;
+
+export type UserByKeyContract = Contract<
+  "/user/by-key",
+  "POST",
+  {
+    keyId: string;
+  },
+  SimpleUser
+>;
+
+export type CreditUserContract = Contract<
+  "/user/credit",
+  "POST",
+  {
+    userId: string;
+    amount: number;
+    label: string;
+    thumbnailUrl?: string;
+  },
+  undefined
+>;
+
+export type DebitUserContract = Contract<
+  "/user/debit",
+  "POST",
+  {
+    userId: string;
+    amount: number;
+    label: string;
+    thumbnailUrl?: string;
+  },
+  undefined
+>;

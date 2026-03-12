@@ -9,8 +9,8 @@ export const GatePage = () => {
   return (
     <>
       <Header title={`Bienvenue, ${user.name}`} />
-      <Content withHeader>
-        <div className="flex h-24 justify-center items-center">
+      <Content>
+        <div className="flex h-svh justify-center items-center">
           <Card className="p-4">
             <h2 className="text-7xl font-bold text-primary">
               {user.balance}
