@@ -12,8 +12,8 @@ import { MeQuery } from "../../domains/user/application/queries/me.query";
 
 export function bootUserEndpoints(
   endpoints: Endpoints,
-  intentBus: InMemoryIntentBus,
   authenticate: AuthenticateFunction,
+  intentBus: InMemoryIntentBus,
 ) {
   endpoints.post<ClaimKeyContract>("/user/claim-key", {
     async validate(ctx) {

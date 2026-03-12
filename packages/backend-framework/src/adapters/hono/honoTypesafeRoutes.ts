@@ -8,14 +8,11 @@ import type {
 } from "@marginal-card/types";
 import type { Context, Hono } from "hono";
 import { streamSSE } from "hono/streaming";
+import { z } from "zod";
 
-import type {
-  SubscriptionRegistry,
-  UserId} from "../../core";
-import {
-  Response,
-  SubscriptionId
-} from "../../core";
+import type { SubscriptionRegistry, UserId } from "../../core";
+import { Response, SubscriptionId } from "../../core";
+import { zodParse } from "../zod";
 
 interface Actor {
   id: UserId;
@@ -39,6 +36,10 @@ type HandlerCallbackWithAuth<
   A extends Actor,
 > = (payload: PayloadOf<C>, actor: A) => Promise<ResultOf<C>>;
 
+const subscriptionSchema = z.object({
+  oldSubscriptionId: z.string().optional(),
+});
+
 export class HonoTypesafeRoutes<ActorClass extends Actor = Actor> {
   constructor(private readonly hono: Hono) {}
 
@@ -56,7 +57,7 @@ export class HonoTypesafeRoutes<ActorClass extends Actor = Actor> {
     this.hono[method](route, async (ctx) => {
       const { actor, payload } = await validate(ctx);
       const result = await handler(payload, actor);
-      const response = Response.ok("ok", result);
+      const response = Response.ok(result);
       ctx.status(response.getStatus() as any);
       return ctx.json(response.serialize());
     });
@@ -107,27 +108,57 @@ export class HonoTypesafeRoutes<ActorClass extends Actor = Actor> {
     validate: (ctx: Context) => Promise<{ actor: ActorClass }>,
     defaultTopics?: Array<keyof T>,
   ) {
-    this.hono.get("/events", async (context) => {
+    this.hono.post("/subscription", async (context) => {
       const { actor } = await validate(context);
+
+      const { oldSubscriptionId: serializedOldSubscriptionId } = zodParse(
+        subscriptionSchema,
+        await context.req.json(),
+      );
+
+      if (serializedOldSubscriptionId) {
+        const oldSubscriptionId = SubscriptionId.parse(
+          serializedOldSubscriptionId,
+        );
+        oldSubscriptionId.ensureIsForUser(actor.id);
+        registry.deleteSubscription(oldSubscriptionId);
+      }
+
+      const subscriptionId = SubscriptionId.for(actor.id);
+
+      registry.registerSubscriptionId(subscriptionId);
+
+      const response = Response.ok({
+        subscriptionId: subscriptionId.serialize(),
+      });
+      context.status(response.getStatus() as any);
+      return context.json(response.serialize());
+    });
+
+    this.hono.get("/events/:subscriptionId", async (context) => {
+      const serializedSubId = context.req.param("subscriptionId");
+
+      const { actor } = await validate(context);
+
+      const subscriptionId = SubscriptionId.deserialize(serializedSubId);
+
+      subscriptionId.ensureIsForUser(actor.id);
+
       return streamSSE(context, async (stream) => {
         const onHandled = async (event: any) =>
           await stream.writeSSE({
             data: JSON.stringify(event),
           });
 
-        const subscriptionId = SubscriptionId.for(actor.id);
-
         await stream.writeSSE({
           data: JSON.stringify({
             name: "Handshake",
             at: new Date(),
-            payload: {
-              subscriptionId: subscriptionId.serialize(),
-            },
+            payload: undefined,
           } satisfies HandshakeSubscriptionEvent),
         });
 
-        registry.registerHandler(subscriptionId, onHandled);
+        const token = registry.registerHandler(subscriptionId, onHandled);
 
         if (defaultTopics) {
           for (const topic of defaultTopics) {
@@ -137,7 +168,7 @@ export class HonoTypesafeRoutes<ActorClass extends Actor = Actor> {
 
         return new Promise((resolve) => {
           stream.onAbort(() => {
-            registry.unregisterHandler(subscriptionId);
+            registry.detachConnectionIfCurrent(subscriptionId, token);
             resolve();
           });
         });

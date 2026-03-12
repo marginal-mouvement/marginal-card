@@ -5,6 +5,7 @@ import { type Context, Hono } from "hono";
 import { bootKeyEndpoints } from "./key/key.endpoints";
 import { bootUserEndpoints } from "./user/user.endpoints";
 import { bootShowEndpoints } from "./show/show.endpoints";
+import { bootTransferEndpoints } from "./transfer/transfer.endpoints";
 
 import type { Authenticator } from "../domains/auth/application/authenticator";
 import type { Actor } from "../domains/auth/domain/actor";
@@ -24,9 +25,11 @@ export function bootEndpoints(
 
   bootKeyEndpoints(endpoints, authenticate, intentBus);
 
-  bootUserEndpoints(endpoints, intentBus);
+  bootUserEndpoints(endpoints, authenticate, intentBus);
 
   bootShowEndpoints(endpoints, authenticate, intentBus);
+
+  bootTransferEndpoints(endpoints, authenticate, intentBus);
 
   return hono;
 }

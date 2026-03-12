@@ -18,7 +18,7 @@ export class UserSaga extends Saga {
 
   @Saga.on(UserCreated)
   async onUserCreated(event: UserCreated) {
-    const { referrerId, id, duringShow } = event.payload;
+    const { referrerId, id, name, duringShow, referrerName } = event.payload;
 
     if (referrerId) {
       await Promise.all([
@@ -28,7 +28,7 @@ export class UserSaga extends Saga {
             userId: referrerId,
             amount: 50,
             transfer: {
-              label: "Referral bonus",
+              label: `Bonus de parrainage (${name})`,
             },
           }),
         ),
@@ -38,7 +38,7 @@ export class UserSaga extends Saga {
             userId: id,
             amount: 50,
             transfer: {
-              label: "Referral bonus",
+              label: `Bonus de parrainage (${referrerName ?? "anonyme"})`,
             },
           }),
         ),
@@ -58,7 +58,8 @@ export class UserSaga extends Saga {
           userId: id,
           amount: show.reward,
           transfer: {
-            label: "Show entry",
+            label: show.name,
+            thumbnailUrl: show.thumbnailUrl,
           },
         }),
       );

@@ -1,9 +1,10 @@
 import { SDK } from "@marginal-card/sdk";
 import type { PayloadOf } from "@marginal-card/types";
 
-import type { CreateKeyContract } from "./key";
+import type { CreateKeyContract, IsKeyAvailableContract } from "./key";
 import type { ClaimKeyContract, MeContract } from "./user";
 import type { AllShowsContract, CreateShowContract } from "./show";
+import type { AllMyTransfersContract } from "./transfer";
 
 class KeyService {
   constructor(private readonly sdk: SDK) {}
@@ -12,6 +13,14 @@ class KeyService {
     return this.sdk.fetch<CreateKeyContract>("/key/create", "POST", {
       showId,
     });
+  }
+
+  async isAvailable(keyId: string) {
+    return (
+      await this.sdk.fetch<IsKeyAvailableContract>("/key/available", "POST", {
+        keyId,
+      })
+    ).available;
   }
 }
 
@@ -39,10 +48,23 @@ class ShowService {
   }
 }
 
+class TransferService {
+  constructor(private readonly sdk: SDK) {}
+
+  allMines() {
+    return this.sdk.fetch<AllMyTransfersContract>(
+      "/transfer/my",
+      "GET",
+      undefined,
+    );
+  }
+}
+
 export class PlatformSDK extends SDK {
   readonly key = new KeyService(this);
   readonly user = new UserService(this);
   readonly show = new ShowService(this);
+  readonly transfer = new TransferService(this);
 
   constructor(baseUrl: string) {
     super(baseUrl);

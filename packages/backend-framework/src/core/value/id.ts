@@ -24,6 +24,10 @@ export function Id<const S extends string>(
       );
     }
 
+    equals(other: Id) {
+      return other.value === this.value;
+    }
+
     static parse<T extends Id>(this: Constructor<T>, candidate: unknown) {
       if (typeof candidate !== "string") {
         throw ApplicationError.malformed(this.name, "must be a string");

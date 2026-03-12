@@ -1,5 +1,5 @@
 import type { IIdentifiable } from "@ddd-ts/core";
-import type { Db, Filter } from "mongodb";
+import type { Db, Filter, SortDirection } from "mongodb";
 
 import type { MongoTransaction } from "./mongo.transaction";
 
@@ -16,11 +16,13 @@ export class MongoStore<T extends IIdentifiable> implements Store<T> {
     return this.db.collection<{ _id: string }>(this.collectionName);
   }
 
-  async find(query?: Filter<{ _id: string }>, transaction?: MongoTransaction) {
+  async find(
+    query?: Filter<{ _id: string }>,
+    sort?: Record<string, SortDirection>,
+  ) {
     const docs = await this.collection
-      .find(query ?? {}, {
-        session: transaction?.session,
-      })
+      .find(query ?? {})
+      .sort({ ...(sort ?? {}) })
       .toArray();
 
     return docs.map(this.serializer.deserialize);

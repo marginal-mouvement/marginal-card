@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App.tsx";
 
 import { ThemeProvider } from "@/components/theme-provider.tsx";
-import { ReaderContextProvider } from "@/core/reader/readerContext.tsx";
+import { ReaderContextProvider } from "@/core/reader/reader.context.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 
 createRoot(document.getElementById("root")!).render(

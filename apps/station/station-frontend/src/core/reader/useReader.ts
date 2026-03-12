@@ -1,6 +1,6 @@
 import { use } from "react";
 
-import { ReaderContext } from "@/core/reader/readerContext.tsx";
+import { ReaderContext } from "@/core/reader/reader.context.tsx";
 
 export function useReader(readerId: string) {
   const { readerDict, dispatchReaderAction } = use(ReaderContext);

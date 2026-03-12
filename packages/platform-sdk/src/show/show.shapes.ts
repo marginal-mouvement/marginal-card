@@ -2,6 +2,6 @@ export interface SimpleShow {
   id: string;
   name: string;
   reward: number;
-  date: Date;
+  date: string;
   thumbnailUrl?: string;
 }

@@ -3,13 +3,19 @@ import { UserId } from "./userId";
 import { Id } from "../id";
 import { ApplicationError } from "../../error";
 
-class ChannelId extends Id("sub") {}
+export class ChannelId extends Id("cha") {}
 
 export class SubscriptionId {
   constructor(
     readonly userId: UserId,
     readonly channelId: ChannelId,
   ) {}
+
+  ensureIsForUser(userId: UserId) {
+    if (!this.userId.equals(userId)) {
+      throw ApplicationError.unauthorized("User ID mismatch");
+    }
+  }
 
   static for(userId: UserId) {
     return new SubscriptionId(userId, ChannelId.generate());

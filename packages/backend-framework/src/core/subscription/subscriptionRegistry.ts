@@ -2,25 +2,85 @@ import type { SubscriptionEvent } from "@marginal-card/types";
 
 import type { SubscriptionId } from "../value";
 import { parallel } from "../concurrency";
+import { ApplicationError } from "../error";
+import type { DatetimeService } from "../misc";
 
 type Handler<E extends SubscriptionEvent<any, any>> = (
   message: E,
 ) => Promise<void>;
 
+interface Channel<E extends SubscriptionEvent<any, any>> {
+  handler: Handler<E>;
+  token: symbol;
+}
+
+type AnyEvent<T extends { [key: string]: SubscriptionEvent<any, any> }> =
+  T[keyof T];
+
+interface SubscriptionManifest {
+  createdAt: number;
+  attachedAt?: number;
+  detachedAt?: number;
+}
+
 export class SubscriptionRegistry<
   T extends { [key: string]: SubscriptionEvent<any, any> },
 > {
-  private readonly subscriptions = new Map<keyof T, Handler<T[keyof T]>>();
+  constructor(private readonly dateTimeService: DatetimeService) {}
+
+  private readonly subscriptionIds = new Map<string, SubscriptionManifest>();
+  private readonly channels = new Map<string, Channel<AnyEvent<T>>>();
   private readonly topicToSubs = new Map<keyof T, Set<string>>();
   private readonly subToTopics = new Map<string, Set<keyof T>>();
 
-  registerHandler(id: SubscriptionId, handler: Handler<T[keyof T]>) {
-    this.subscriptions.set(id.serialize(), handler);
+  registerSubscriptionId(id: SubscriptionId) {
+    this.subscriptionIds.set(id.serialize(), {
+      createdAt: this.dateTimeService.now().getTime(),
+    });
   }
 
-  unregisterHandler(id: SubscriptionId) {
+  registerHandler(id: SubscriptionId, handler: Handler<T[keyof T]>) {
+    const token = Symbol();
+
+    const subscriptionManifest = this.subscriptionIds.get(id.serialize());
+
+    if (!subscriptionManifest) {
+      throw ApplicationError.notFound("Subscription", id);
+    }
+
+    subscriptionManifest.detachedAt = undefined;
+    subscriptionManifest.attachedAt = this.dateTimeService.now().getTime();
+
+    this.channels.set(id.serialize(), {
+      handler,
+      token,
+    });
+    return token;
+  }
+
+  detachConnectionIfCurrent(id: SubscriptionId, token: symbol) {
     const subscriptionIdString = id.serialize();
-    this.subscriptions.delete(subscriptionIdString);
+    const current = this.channels.get(subscriptionIdString);
+
+    if (current?.token !== token) {
+      return;
+    }
+
+    this.channels.delete(subscriptionIdString);
+
+    const subscriptionManifest = this.subscriptionIds.get(subscriptionIdString);
+
+    if (subscriptionManifest) {
+      subscriptionManifest.detachedAt = this.dateTimeService.now().getTime();
+    }
+  }
+
+  deleteSubscription(id: SubscriptionId) {
+    const subscriptionIdString = id.serialize();
+
+    this.subscriptionIds.delete(subscriptionIdString);
+    this.channels.delete(subscriptionIdString);
+
     const topics = this.subToTopics.get(subscriptionIdString);
     if (topics) {
       for (const topic of topics) {
@@ -87,8 +147,8 @@ export class SubscriptionRegistry<
     }
 
     await parallel(recipients, 20, async (id) => {
-      const handler = this.subscriptions.get(id);
-      await handler?.(event);
+      const handlerManifest = this.channels.get(id);
+      await handlerManifest?.handler?.(event);
     });
   }
 }

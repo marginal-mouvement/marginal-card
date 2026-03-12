@@ -38,7 +38,7 @@ export function bootShowEndpoints(
         id: show.id.serialize(),
         name: show.name,
         reward: show.reward,
-        date: show.date,
+        date: show.date.toISOString(),
         thumbnailUrl: show.thumbnailUrl,
       };
     },
@@ -57,7 +57,7 @@ export function bootShowEndpoints(
         id: show.id.serialize(),
         name: show.name,
         reward: show.reward,
-        date: show.date,
+        date: show.date.toISOString(),
         thumbnailUrl: show.thumbnailUrl,
       }));
     },

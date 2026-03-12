@@ -7,6 +7,7 @@ import type {
 import { MongoKeyStore } from "../infra/mongo.key.store";
 import { CreateKeyCommandHandler } from "../application/commands/createKey.command";
 import type { MongoShowStore } from "../../show/infra/mongo.show.store";
+import { IsKeyAvailableQueryHandler } from "../application/commands/isKeyAvailable.query";
 
 export function bootKey(
   db: Db,
@@ -19,6 +20,8 @@ export function bootKey(
   intentBus.register(
     new CreateKeyCommandHandler(keyStore, showStore, transactionPerformer),
   );
+
+  intentBus.register(new IsKeyAvailableQueryHandler(keyStore));
 
   return { keyStore };
 }

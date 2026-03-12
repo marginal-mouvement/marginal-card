@@ -16,6 +16,10 @@ export class Key extends Shape({
     });
   }
 
+  isAvailable() {
+    return this.ownerId === undefined;
+  }
+
   assign(ownerId: UserId) {
     if (this.ownerId) {
       throw DomainError.conflict("Key already claimed");

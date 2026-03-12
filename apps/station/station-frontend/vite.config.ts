@@ -7,7 +7,7 @@ import path from "path";
 
 config();
 
-const outDir = process.env.VITE_OUT_DIR ?? "../../backend/public/panel";
+const outDir = process.env.VITE_OUT_DIR ?? "../../backend/public/frontend";
 
 // https://vite.dev/config/
 export default defineConfig({

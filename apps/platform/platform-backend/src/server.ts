@@ -8,6 +8,7 @@ import {
   Logger,
 } from "@marginal-card/backend-framework";
 import { cors } from "hono/cors";
+import { serveStatic } from "@hono/node-server/serve-static";
 
 import { globalBoot } from "./boot/globalBoot";
 import { bootEndpoints } from "./endpoints/bootEndpoints";
@@ -39,9 +40,15 @@ app.onError((err, ctx) => {
   );
 });
 
+const FRONTEND_RELATIVE_PATH = Environment.get("FRONTEND_RELATIVE_PATH");
+
+app.get("/*", serveStatic({ root: FRONTEND_RELATIVE_PATH }));
+app.get("*", serveStatic({ path: `${FRONTEND_RELATIVE_PATH}/index.html` }));
+
 serve(
   {
     fetch: app.fetch,
+    hostname: "0.0.0.0",
     port: Number.parseInt(Environment.get("PORT"), 10),
   },
   console.log,

@@ -64,6 +64,7 @@ export class ClaimKeyCommandHandler extends CommandHandler(ClaimKeyCommand) {
         name,
         email,
         referrerId: referrer?.id,
+        referrerName: referrer?.name,
         duringShow: key.showId,
       });
 

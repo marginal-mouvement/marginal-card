@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { ReaderContext } from "@/core/reader/readerContext.tsx";
+import { ReaderContext } from "@/core/reader/reader.context.tsx";
 
 export const Menu = () => {
   const { readerList } = use(ReaderContext);

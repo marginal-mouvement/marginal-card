@@ -1,4 +1,4 @@
-import type { ErrorCode} from "./code";
+import type { ErrorCode } from "./code";
 import { OkCode } from "./code";
 
 export class Response<D> {
@@ -9,8 +9,8 @@ export class Response<D> {
     private readonly data?: D,
   ) {}
 
-  static ok<D>(message: string, data?: D) {
-    return new Response<D>(OkCode.OK, message, true, data);
+  static ok<D>(data?: D) {
+    return new Response<D>(OkCode.OK, "ok", true, data);
   }
 
   getStatus() {

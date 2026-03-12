@@ -6,3 +6,10 @@ export type CreateKeyContract = Contract<
   { showId?: string },
   { keyId: string }
 >;
+
+export type IsKeyAvailableContract = Contract<
+  "/key/available",
+  "POST",
+  { keyId: string },
+  { available: boolean }
+>;

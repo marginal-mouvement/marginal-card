@@ -1,6 +1,6 @@
 export interface SubscriptionEvent<
   N extends string,
-  P extends Record<string, any>,
+  P extends Record<string, any> | undefined,
 > {
   name: N;
   payload: P;
@@ -9,7 +9,5 @@ export interface SubscriptionEvent<
 
 export type HandshakeSubscriptionEvent = SubscriptionEvent<
   "Handshake",
-  {
-    subscriptionId: string;
-  }
+  undefined
 >;

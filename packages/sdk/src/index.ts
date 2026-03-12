@@ -34,9 +34,10 @@ export class ApiServerError extends Error {
 export class SDK<
   T extends { [key: string]: SubscriptionEvent<any, any> } = any,
 > {
-  private subscriptionId: string | undefined;
   private apiKey?: string;
   private keyId?: string;
+
+  private errorCallback?: (error: Error) => void;
 
   constructor(private readonly baseUrl: string) {}
 
@@ -74,22 +75,36 @@ export class SDK<
     )
       .then((res) => res.json())
       .catch((err) => {
-        throw new ApiClientError(err);
+        const error = new ApiClientError(err);
+        this.errorCallback?.(err);
+        throw error;
       });
 
     if (!response.ok) {
-      throw new ApiServerError(response);
+      const error = new ApiServerError(response);
+      this.errorCallback?.(error);
+      throw error;
     }
 
     return response.data;
   }
 
-  subscribeToEvents(
-    callback: (event: T[keyof T] | HandshakeSubscriptionEvent) => void,
+  async subscribeToEvents(
+    callback: (event: T[keyof T]) => void,
+    oldSubscriptionId?: string,
   ) {
-    const eventSource = new EventSource(`${this.baseUrl}/events`, {
-      withCredentials: true,
-    });
+    const subscriptionId: string = (
+      await this.fetch("/subscription", "POST", {
+        oldSubscriptionId,
+      })
+    ).subscriptionId;
+
+    const eventSource = new EventSource(
+      `${this.baseUrl}/events/${subscriptionId}`,
+      {
+        withCredentials: true,
+      },
+    );
 
     eventSource.onmessage = (e) => {
       const event = JSON.parse(e.data) as
@@ -97,23 +112,32 @@ export class SDK<
         | HandshakeSubscriptionEvent;
 
       if (event.name === "Handshake") {
-        this.subscriptionId = event.payload.subscriptionId;
+        console.log(event);
         return;
       }
 
-      callback(event);
+      callback(event as T[keyof T]);
     };
 
-    return () => {
+    const unsubscribe = () => {
       eventSource.close();
     };
+
+    return { unsubscribe, subscriptionId };
+  }
+
+  onError(callback: (error: Error) => void) {
+    this.errorCallback = callback;
+    return this;
   }
 
   setApiKey(apiKey?: string) {
     this.apiKey = apiKey;
+    return this;
   }
 
   setKeyId(keyId?: string) {
     this.keyId = keyId;
+    return this;
   }
 }

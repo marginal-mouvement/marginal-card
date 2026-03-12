@@ -4,7 +4,8 @@
   "license": "ISC",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "station:create-session": "ts-node src/scripts/createStationSession.ts"
+    "station:create-session": "ts-node src/scripts/createStationSession.ts",
+    "build:esbuild": "ts-node src/scripts/build/esbuild.ts"
   },
   "dependencies": {
     "@ddd-ts/core": "^0.0.35",
@@ -18,6 +19,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@ddd-ts/store-inmemory": "^0.0.36"
+    "@ddd-ts/store-inmemory": "^0.0.36",
+    "esbuild": "^0.27.3"
   }
 }

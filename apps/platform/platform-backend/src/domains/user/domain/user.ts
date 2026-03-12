@@ -11,6 +11,7 @@ export class UserCreated extends EsEvent("UserCreated", {
   name: String,
   email: Email,
   referrerId: Optional(UserId),
+  referrerName: Optional(String),
   duringShow: Optional(ShowId),
 }) {}
 
@@ -50,10 +51,12 @@ export class User extends EsAggregate("User", {
     email,
     referrerId,
     duringShow,
+    referrerName,
   }: {
     name: string;
     email: Email;
     referrerId?: UserId;
+    referrerName?: string;
     duringShow?: ShowId;
   }) {
     return this.new(
@@ -62,6 +65,7 @@ export class User extends EsAggregate("User", {
         name,
         email,
         referrerId,
+        referrerName,
         duringShow,
       }),
     );
