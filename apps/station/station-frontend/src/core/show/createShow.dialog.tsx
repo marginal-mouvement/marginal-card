@@ -102,7 +102,7 @@ export const CreateShowDialog = ({
         </DialogHeader>
         <div className="flex flex-col gap-4 items-center">
           <div className="w-40">
-            <AspectRatio ratio={1} className=" rounded-lg bg-muted">
+            <AspectRatio ratio={1} className="rounded-lg bg-muted">
               {thumbnail.trim() && (
                 <img
                   src={thumbnail}
