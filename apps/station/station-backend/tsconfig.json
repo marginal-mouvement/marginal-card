@@ -5,6 +5,7 @@
       "@tockawa/nfc-pcsc": [
         "./node_modules/@tockawa/nfc-pcsc/dist/types/src/index.d.ts"
       ]
-    }
+    },
+    "resolveJsonModule": true
   }
 }

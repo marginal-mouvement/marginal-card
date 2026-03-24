@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "license": "ISC",
   "scripts": {
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "build:esbuild": "ts-node src/scripts/build/esbuild.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.11",
@@ -14,6 +15,7 @@
   },
   "devDependencies": {
     "@marginal-card/station-sdk": "workspace:*",
-    "@marginal-card/types": "workspace:*"
+    "@marginal-card/types": "workspace:*",
+    "esbuild": "^0.27.3"
   }
 }

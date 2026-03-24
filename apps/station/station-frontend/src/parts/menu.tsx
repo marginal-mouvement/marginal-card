@@ -1,9 +1,19 @@
 import { use } from "react";
-import { BookCopyIcon, Key, Settings } from "lucide-react";
+import {
+  BookCopyIcon,
+  Gift,
+  Key,
+  Settings,
+  Tag,
+  Ticket,
+  Users,
+} from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 import {
   Sidebar,
+  SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -39,46 +49,106 @@ export const Menu = () => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarGroup>
-        <SidebarGroupLabel>Readers</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu className="gap-1">
-            {readerList.length === 0 && (
-              <div className="mt-2 ml-2 text-muted-foreground text-xs flex flex-1 gap-2">
-                <Spinner /> No readers connected
-              </div>
-            )}
-            {readerList.map((reader) => (
-              <SidebarMenuItem key={reader.id}>
-                <Link to={`/reader/${reader.id}`}>
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Readers</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              {readerList.length === 0 && (
+                <div className="mt-2 ml-2 text-muted-foreground text-xs flex flex-1 gap-2">
+                  <Spinner /> No readers connected
+                </div>
+              )}
+              {readerList.map((reader) => (
+                <SidebarMenuItem key={reader.id}>
+                  <Link to={`/reader/${reader.id}`}>
+                    <SidebarMenuButton
+                      isActive={location.pathname === `/reader/${reader.id}`}
+                    >
+                      <BookCopyIcon />
+                      <span className="truncate">{reader.name}</span>
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Station</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              <SidebarMenuItem>
+                <Link to="/station/products">
                   <SidebarMenuButton
-                    isActive={location.pathname === `/reader/${reader.id}`}
+                    isActive={location.pathname === "/station/products"}
                   >
-                    <BookCopyIcon />
-                    <span className="truncate">{reader.name}</span>
+                    <Tag /> Products
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-      <SidebarGroup>
-        <SidebarGroupLabel>Station</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu className="gap-1">
-            <SidebarMenuItem>
-              <Link to="/station/settings">
+              <SidebarMenuItem>
+                <Link to="/station/rewards">
+                  <SidebarMenuButton
+                    isActive={location.pathname === "/station/rewards"}
+                  >
+                    <Gift /> Rewards
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              <SidebarMenuItem>
+                <Link to="/platform/shows">
+                  <SidebarMenuButton
+                    isActive={location.pathname === "/platform/shows"}
+                  >
+                    <Ticket /> Shows
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                {/*<Link to="/platform/users">*/}
                 <SidebarMenuButton
-                  isActive={location.pathname === "/station/settings"}
+                  disabled
+                  isActive={location.pathname === "/platform/users"}
                 >
-                  <Settings /> Settings
+                  <Users /> Users
                 </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
+                {/*</Link>*/}
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                {/*<Link to="/platform/keys">*/}
+                <SidebarMenuButton
+                  disabled
+                  isActive={location.pathname === "/platform/keys"}
+                >
+                  <Key /> Keys
+                </SidebarMenuButton>
+                {/*</Link>*/}
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu className="gap-1">
+          <SidebarMenuItem>
+            <Link to="/settings">
+              <SidebarMenuButton isActive={location.pathname === "/settings"}>
+                <Settings /> Settings
+              </SidebarMenuButton>
+            </Link>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 };

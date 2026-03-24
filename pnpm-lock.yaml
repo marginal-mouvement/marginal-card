@@ -213,6 +213,9 @@ importers:
       '@marginal-card/types':
         specifier: workspace:*
         version: link:../../../packages/types
+      esbuild:
+        specifier: ^0.27.3
+        version: 0.27.3
 
   apps/station/station-frontend:
     dependencies:

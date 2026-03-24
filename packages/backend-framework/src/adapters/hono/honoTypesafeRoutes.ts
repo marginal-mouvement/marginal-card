@@ -126,7 +126,7 @@ export class HonoTypesafeRoutes<ActorClass extends Actor = Actor> {
 
       const subscriptionId = SubscriptionId.for(actor.id);
 
-      registry.registerSubscriptionId(subscriptionId);
+      registry.registerSubscription(subscriptionId);
 
       const response = Response.ok({
         subscriptionId: subscriptionId.serialize(),

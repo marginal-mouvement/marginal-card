@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { type ReactNode, use, useCallback, useEffect, useState } from "react";
 import { CircleCheck, CircleSlash, Plus, RotateCcw } from "lucide-react";
 
 import { Spinner } from "@/components/ui/spinner.tsx";
@@ -6,10 +6,9 @@ import { useReader } from "@/core/reader/useReader.ts";
 import { stationSDK } from "@/core/sdk/stationSDK.ts";
 import { platformSDK } from "@/core/platform/platformSDK.ts";
 import { PulseRingIcon } from "@/components/icons/svg-spinners-pulse-ring.tsx";
-import { ReaderStatus } from "@/pages/reader/components/readerStatus.tsx";
+import { ReaderStatus } from "@/pages/readers/components/readerStatus.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { CreateShowDialog } from "@/core/show/createShow.dialog.tsx";
-import { useShows } from "@/core/show/useShows.ts";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.tsx";
 import {
   Field,
@@ -19,6 +18,7 @@ import {
   FieldTitle,
 } from "@/components/ui/field.tsx";
 import { Kbd } from "@/components/ui/kbd.tsx";
+import { ShowContext } from "@/core/show/show.context.tsx";
 
 interface ReaderWriteProps {
   readerId: string;
@@ -49,7 +49,7 @@ const BadgeVariant = {
 
 export const ReaderWrite = ({ readerId }: ReaderWriteProps) => {
   const { reader, dispatchReaderAction } = useReader(readerId);
-  const { shows, showsLoading, createShow } = useShows();
+  const { shows, showsLoading, createShow, fetchShows } = use(ShowContext);
 
   const [status, setStatus] = useState<Status>("idle");
 
@@ -79,6 +79,10 @@ export const ReaderWrite = ({ readerId }: ReaderWriteProps) => {
       generateKey().catch(console.error);
     }
   }, [dispatchReaderAction, generateKey, reader.keyPresence, readerId]);
+
+  useEffect(() => {
+    fetchShows();
+  }, [fetchShows]);
 
   return (
     <div className="flex flex-col gap-10">

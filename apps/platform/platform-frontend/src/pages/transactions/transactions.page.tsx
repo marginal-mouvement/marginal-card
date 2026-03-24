@@ -3,7 +3,7 @@ import { Minus, Plus } from "lucide-react";
 
 import { Header } from "@/parts/header.tsx";
 import { Content } from "@/parts/content.tsx";
-import { DataContext } from "@/modules/data/data.context.tsx";
+import { TransferContext } from "@/modules/transfer/transfer.context.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import {
   Item,
@@ -22,24 +22,24 @@ import { DateFormatter } from "@/lib/utils.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 
 export const TransactionsPage = () => {
-  const { loadTransactions, transactions, areTransactionsLoading } =
-    use(DataContext);
+  const { loadMyTransfers, transfers, areTransfersLoading } =
+    use(TransferContext);
 
   useEffect(() => {
-    loadTransactions();
-  }, [loadTransactions]);
+    loadMyTransfers();
+  }, [loadMyTransfers]);
 
   return (
     <>
       <Header title="Transactions" />
       <Content withHeader>
-        {areTransactionsLoading ? (
+        {areTransfersLoading ? (
           <div className="flex justify-center">
             <Spinner />
           </div>
-        ) : transactions.length > 0 ? (
+        ) : transfers.length > 0 ? (
           <div className="flex flex-col gap-4">
-            {transactions.map((transaction) => (
+            {transfers.map((transaction) => (
               <Item key={transaction.id} variant="outline">
                 <ItemMedia>
                   <Avatar size="lg">

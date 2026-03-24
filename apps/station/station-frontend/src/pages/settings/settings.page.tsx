@@ -24,7 +24,7 @@ export const SettingsPage = () => {
   }, [apiKey]);
 
   return (
-    <Page title="Settings">
+    <Page title="Platform" muted="Settings">
       <Field className="max-w-80">
         <FieldLabel htmlFor="input-button-group">Platform API key</FieldLabel>
         <ButtonGroup>

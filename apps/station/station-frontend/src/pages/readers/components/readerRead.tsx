@@ -5,9 +5,9 @@ import { toast } from "sonner";
 
 import { useReader } from "@/core/reader/useReader.ts";
 import { PulseRingIcon } from "@/components/icons/svg-spinners-pulse-ring.tsx";
-import { ReaderStatus } from "@/pages/reader/components/readerStatus.tsx";
+import { ReaderStatus } from "@/pages/readers/components/readerStatus.tsx";
 import { platformSDK } from "@/core/platform/platformSDK.ts";
-import { UserCard } from "@/pages/reader/components/userCard.tsx";
+import { UserCard } from "@/pages/readers/components/userCard.tsx";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";

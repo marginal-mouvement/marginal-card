@@ -4,11 +4,11 @@ import { Menu } from "@/parts/menu.tsx";
 import { GatePage } from "@/pages/gate/gate.page.tsx";
 import { TransactionsPage } from "@/pages/transactions/transactions.page.tsx";
 import { ProfilePage } from "@/pages/profile/profile.page.tsx";
-import { DataContextProvider } from "@/modules/data/data.context.tsx";
+import { TransferContextProvider } from "@/modules/transfer/transfer.context.tsx";
 
 export const AuthenticatedContainer = () => {
   return (
-    <DataContextProvider>
+    <TransferContextProvider>
       <Routes>
         <Route path="/" element={<GatePage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
@@ -16,6 +16,6 @@ export const AuthenticatedContainer = () => {
         <Route path="*" element={<Navigate to={"/"} />} />
       </Routes>
       <Menu />
-    </DataContextProvider>
+    </TransferContextProvider>
   );
 };

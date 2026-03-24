@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Page } from "@/parts/page.tsx";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import { useReader } from "@/core/reader/useReader.ts";
-import { ReaderRead } from "@/pages/reader/components/readerRead.tsx";
-import { ReaderWrite } from "@/pages/reader/components/readerWrite.tsx";
+import { ReaderRead } from "@/pages/readers/components/readerRead.tsx";
+import { ReaderWrite } from "@/pages/readers/components/readerWrite.tsx";
 
 interface ReaderPageProps {
   readerId: string;

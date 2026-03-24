@@ -62,13 +62,6 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
     async function authenticate() {
       if (!keyId) return;
-      const isKeyAvailable = await platformSDK.key.isAvailable(keyId);
-
-      if (isKeyAvailable) {
-        setIsLoading(false);
-        return;
-      }
-
       const user = await platformSDK.user.me();
       setUser(user);
       setIsAuthenticated(true);

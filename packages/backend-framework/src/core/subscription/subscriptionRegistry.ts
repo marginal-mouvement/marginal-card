@@ -18,6 +18,7 @@ type AnyEvent<T extends { [key: string]: SubscriptionEvent<any, any> }> =
   T[keyof T];
 
 interface SubscriptionManifest {
+  id: SubscriptionId;
   createdAt: number;
   attachedAt?: number;
   detachedAt?: number;
@@ -28,13 +29,18 @@ export class SubscriptionRegistry<
 > {
   constructor(private readonly dateTimeService: DatetimeService) {}
 
-  private readonly subscriptionIds = new Map<string, SubscriptionManifest>();
+  private static DetachedSubscriptionMaxAge = 1000 * 60;
+
+  private readonly subscriptions = new Map<string, SubscriptionManifest>();
   private readonly channels = new Map<string, Channel<AnyEvent<T>>>();
   private readonly topicToSubs = new Map<keyof T, Set<string>>();
   private readonly subToTopics = new Map<string, Set<keyof T>>();
 
-  registerSubscriptionId(id: SubscriptionId) {
-    this.subscriptionIds.set(id.serialize(), {
+  private cleanerTimeout: ReturnType<typeof setInterval> | undefined;
+
+  registerSubscription(id: SubscriptionId) {
+    this.subscriptions.set(id.serialize(), {
+      id,
       createdAt: this.dateTimeService.now().getTime(),
     });
   }
@@ -42,7 +48,7 @@ export class SubscriptionRegistry<
   registerHandler(id: SubscriptionId, handler: Handler<T[keyof T]>) {
     const token = Symbol();
 
-    const subscriptionManifest = this.subscriptionIds.get(id.serialize());
+    const subscriptionManifest = this.subscriptions.get(id.serialize());
 
     if (!subscriptionManifest) {
       throw ApplicationError.notFound("Subscription", id);
@@ -68,7 +74,7 @@ export class SubscriptionRegistry<
 
     this.channels.delete(subscriptionIdString);
 
-    const subscriptionManifest = this.subscriptionIds.get(subscriptionIdString);
+    const subscriptionManifest = this.subscriptions.get(subscriptionIdString);
 
     if (subscriptionManifest) {
       subscriptionManifest.detachedAt = this.dateTimeService.now().getTime();
@@ -78,7 +84,7 @@ export class SubscriptionRegistry<
   deleteSubscription(id: SubscriptionId) {
     const subscriptionIdString = id.serialize();
 
-    this.subscriptionIds.delete(subscriptionIdString);
+    this.subscriptions.delete(subscriptionIdString);
     this.channels.delete(subscriptionIdString);
 
     const topics = this.subToTopics.get(subscriptionIdString);
@@ -132,6 +138,35 @@ export class SubscriptionRegistry<
         this.topicToSubs.delete(topic);
       }
     }
+  }
+
+  clean() {
+    const now = this.dateTimeService.now().getTime();
+
+    for (const subscriptionManifest of this.subscriptions.values()) {
+      if (!subscriptionManifest.detachedAt) {
+        return;
+      }
+
+      if (
+        now - subscriptionManifest.detachedAt >=
+        SubscriptionRegistry.DetachedSubscriptionMaxAge
+      ) {
+        this.deleteSubscription(subscriptionManifest.id);
+      }
+    }
+  }
+
+  configureCleanCrawler(interval: number) {
+    if (this.cleanerTimeout) {
+      return;
+    }
+
+    const timeout = setInterval(() => this.clean(), interval);
+
+    this.cleanerTimeout = timeout;
+
+    return timeout;
   }
 
   async publish<TargetedTopics extends keyof T>(

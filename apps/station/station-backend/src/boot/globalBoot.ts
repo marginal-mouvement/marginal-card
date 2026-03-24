@@ -12,6 +12,8 @@ export function globalBoot() {
   const subscriptionRegistry =
     new SubscriptionRegistry<StationSubscriptionTopics>(dateTimeService);
 
+  subscriptionRegistry.configureCleanCrawler(1000 * 60 * 5);
+
   const { readerManager } = bootReader(dateTimeService, subscriptionRegistry);
 
   return { readerManager, subscriptionRegistry };
