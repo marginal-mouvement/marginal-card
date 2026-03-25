@@ -10,7 +10,11 @@ type Dependencies = (typeof packageJson)["dependencies"];
 type SomeDependencies = Partial<Dependencies>;
 type PickedDependencies = Array<keyof (typeof packageJson)["dependencies"]>;
 
-const EXTERNAL_DEPS: PickedDependencies = ["@tockawa/nfc-pcsc"];
+const EXTERNAL_DEPS: PickedDependencies = [
+  "@tockawa/nfc-pcsc",
+  "hono",
+  "@hono/node-server",
+];
 
 const env = fs.readFileSync("./.env", "utf-8");
 
