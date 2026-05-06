@@ -1,8 +1,8 @@
 import { type ReactNode, useCallback, useState } from "react";
 import { Plus } from "lucide-react";
-import type { PayloadOf } from "@marginal-card/types";
-import type { CreateShowContract } from "@marginal-card/platform-sdk";
 import { toast } from "sonner";
+import type { ShowApi } from "@marginal-card/platform-sdk";
+import type { PayloadOf } from "@marginal-card/sdk";
 
 import {
   Dialog,
@@ -22,7 +22,7 @@ import { Spinner } from "@/components/ui/spinner.tsx";
 
 interface CreateShowDialogProps {
   children: ReactNode;
-  createShow: (payload: PayloadOf<CreateShowContract>) => Promise<void>;
+  createShow: (payload: PayloadOf<typeof ShowApi.Create>) => Promise<void>;
 }
 
 export const CreateShowDialog = ({

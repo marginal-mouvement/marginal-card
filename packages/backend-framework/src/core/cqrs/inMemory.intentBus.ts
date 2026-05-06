@@ -6,7 +6,7 @@ import { InfrastructureError } from "../error";
 
 export class InMemoryIntentBus implements IntentBus {
   private readonly handlers: Map<string, IntentHandler<any>> = new Map();
-  private logger = Logger.for(InMemoryIntentBus);
+  private logger = Logger.for("InMemoryIntentBus");
 
   register(handler: IntentHandler<any>) {
     const intentName = handler.of.name;

@@ -1,2 +1,2 @@
 export type * from "./show.shapes";
-export type * from "./show.contracts";
+export { ShowApi } from "./show.api";

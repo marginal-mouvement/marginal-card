@@ -1,3 +1,3 @@
-export type * from "./user.contracts";
-export * from "./user.regex";
+export { UserApi } from "./user.api";
+export { UserRegex } from "./user.regex";
 export type * from "./user.shapes";

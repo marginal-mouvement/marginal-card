@@ -19,7 +19,7 @@ export const SettingsPage = () => {
 
   const handleSave = useCallback(() => {
     PlatformApiKeyStore.save(apiKey);
-    platformSDK.setApiKey(apiKey);
+    platformSDK.loginByApiKey(apiKey);
     setIsEditing(false);
   }, [apiKey]);
 

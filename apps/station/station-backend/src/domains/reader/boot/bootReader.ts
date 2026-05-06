@@ -3,7 +3,7 @@ import type {
   SubscriptionRegistry,
 } from "@marginal-card/backend-framework";
 import { Environment } from "@marginal-card/backend-framework";
-import type { StationSubscriptionTopics } from "@marginal-card/station-sdk";
+import type { StationTopics } from "@marginal-card/station-sdk";
 import PCSC from "@tockawa/nfc-pcsc";
 
 import { ReaderManager } from "../infra/readerManager";
@@ -11,7 +11,7 @@ import { UriPrefix } from "../infra/utils/uriPrefix";
 
 export function bootReader(
   dateTimeService: NodeDatetimeService,
-  subscriptionRegistry: SubscriptionRegistry<StationSubscriptionTopics>,
+  subscriptionRegistry: SubscriptionRegistry<StationTopics>,
 ) {
   const readerManager = new ReaderManager(
     Environment.get("URI_PREFIX") === "https"

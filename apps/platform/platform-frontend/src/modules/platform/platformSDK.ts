@@ -6,7 +6,7 @@ import { KeyStore } from "@/modules/key/key.store.ts";
 export const platformSDK = new PlatformSDK(
   import.meta.env.VITE_PLATFORM_BASE_URL,
 )
-  .onError((error) => {
+  .withDefaultErrorCallback((error) => {
     toast.error(error.message);
   })
-  .setKeyId(KeyStore.load());
+  .loginByKey(KeyStore.load());

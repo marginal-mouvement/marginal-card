@@ -14,7 +14,7 @@ export const GatePage = () => {
       <Header title={`Bienvenue, ${user.name}`} />
       <Content withHeader className="flex flex-col gap-4">
         <div className="flex justify-center items-center flex-col gap-4 pt-16 pb-24">
-          <Badge variant="secondary">Ton solde</Badge>
+          <Badge variant="secondary">Mon solde</Badge>
           <Card className="p-4">
             <h2 className="text-7xl font-bold text-primary">
               {user.balance}

@@ -1,1 +1,1 @@
-export type * from "./key.contracts";
+export { KeyApi } from "./key.api";

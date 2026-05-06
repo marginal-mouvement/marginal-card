@@ -30,14 +30,14 @@ import { Badge } from "@/components/ui/badge.tsx";
 import { AuthContext } from "@/modules/auth/auth.context.tsx";
 
 export const ProfilePage = () => {
-  const { eraseKeyId } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const user = useUser();
 
   const handleLogout = useCallback(() => {
     if (confirm("Se déconnecter ?")) {
-      eraseKeyId();
+      logout();
     }
-  }, [eraseKeyId]);
+  }, [logout]);
 
   return (
     <>

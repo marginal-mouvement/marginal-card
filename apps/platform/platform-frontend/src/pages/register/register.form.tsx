@@ -1,6 +1,6 @@
-import { UserRegex } from "@marginal-card/platform-sdk";
 import { Key } from "lucide-react";
 import { use, useState } from "react";
+import { UserRegex } from "@marginal-card/platform-sdk";
 
 import {
   Field,

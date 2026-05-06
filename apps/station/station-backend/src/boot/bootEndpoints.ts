@@ -1,52 +1,49 @@
 import { Hono } from "hono";
-import type { SubscriptionRegistry } from "@marginal-card/backend-framework";
-import {
-  HonoTypesafeRoutes,
-  KeyId,
-  UserId,
-} from "@marginal-card/backend-framework";
 import type {
-  GetReadersContract,
-  StationSubscriptionTopics,
-  WriteKeyIdContract,
-} from "@marginal-card/station-sdk";
-import type { PayloadOf } from "@marginal-card/types";
+  IntentBus,
+  SubscriptionRegistry,
+} from "@marginal-card/backend-framework";
+import { HonoRouter, KeyId, UserId } from "@marginal-card/backend-framework";
+import type { StationTopics } from "@marginal-card/station-sdk";
+import { ReaderApi, SubscriptionApi } from "@marginal-card/station-sdk";
 
 import type { ReaderManager } from "../domains/reader/infra/readerManager";
 import { ReaderId } from "../domains/reader/domain/readerId";
+import { CreateSubscriptionCommand } from "../domains/subscription/application/createSubscription.command";
 
 export function bootEndpoints(
   readerManager: ReaderManager,
-  subscriptionRegistry: SubscriptionRegistry<StationSubscriptionTopics>,
+  subscriptionRegistry: SubscriptionRegistry<StationTopics>,
+  intentBus: IntentBus,
 ) {
   const hono = new Hono();
-  const endpoints = new HonoTypesafeRoutes(hono);
 
-  endpoints.post<WriteKeyIdContract>("/reader/write", {
-    async validate(ctx) {
-      return { payload: await ctx.req.json<PayloadOf<WriteKeyIdContract>>() };
-    },
-    async handle({ readerId, keyId }) {
-      await readerManager.write(ReaderId.parse(readerId), KeyId.parse(keyId));
-    },
+  const router = new HonoRouter(hono, async () => ({
+    id: UserId.station(),
+  }));
+
+  router.routeWithoutAuth(ReaderApi.WriteKeyId, async (payload) => {
+    await readerManager.write(
+      ReaderId.parse(payload.readerId),
+      KeyId.parse(payload.keyId),
+    );
   });
 
-  endpoints.get<GetReadersContract>("/reader/list", {
-    async validate() {
-      return { payload: undefined };
-    },
-    async handle() {
-      return { readers: readerManager.getReaders() };
-    },
+  router.routeWithoutAuth(ReaderApi.GetAll, async () => {
+    return { readers: readerManager.getReaders() };
   });
 
-  endpoints.subscription(
-    subscriptionRegistry,
-    async () => ({
-      actor: { id: UserId.root() },
-    }),
-    ["reader:*"],
-  );
+  router.routeWithoutAuth(SubscriptionApi.Create, async () => {
+    const { subscriptionId } = await intentBus.handle(
+      new CreateSubscriptionCommand({}),
+    );
+
+    return {
+      subscriptionId: subscriptionId.serialize(),
+    };
+  });
+
+  router.subscription(subscriptionRegistry, ["reader*"]);
 
   return hono;
 }

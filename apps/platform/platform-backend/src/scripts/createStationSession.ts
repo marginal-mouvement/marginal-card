@@ -9,8 +9,7 @@ import { Session } from "../domains/auth/domain/session";
 import { Permission } from "../domains/auth/domain/permission";
 import { HonoTokenParser } from "../domains/auth/infra/hono.tokenParser";
 
-
-export async function createStationSession() {
+async function createStationSession() {
   const sessionStore = new MongoSessionStore(db);
   const tokenParser = new HonoTokenParser(
     AlgorithmTypes.HS256,
@@ -20,7 +19,7 @@ export async function createStationSession() {
   const session = Session.create(
     {
       permission: Permission.station(),
-      userId: UserId.platform(),
+      userId: UserId.station(),
     },
     new Date(),
   );

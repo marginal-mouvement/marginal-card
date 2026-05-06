@@ -1,1 +1,2 @@
-export { HonoTypesafeRoutes } from "./honoTypesafeRoutes";
+export { HonoRouter } from "./hono.router";
+export { handleError } from "./handleError";

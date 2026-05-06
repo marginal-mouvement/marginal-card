@@ -7,6 +7,7 @@ import {
   useReducer,
   useRef,
 } from "react";
+import { ReaderApi } from "@marginal-card/station-sdk";
 
 import { stationSDK } from "@/core/sdk/stationSDK.ts";
 import type { Reader, ReaderAction, ReaderDict } from "@/core/reader/types.ts";
@@ -30,16 +31,14 @@ export const ReaderContextProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     async function fetchReaders() {
-      const res = await stationSDK.reader.list();
+      const res = await stationSDK.use(ReaderApi.GetAll);
 
       dispatchReaderAction({
         type: "fetch-initial-data",
         payload: res,
       });
 
-      const { unsubscribe } = await stationSDK.subscribeToEvents((event) => {
-        console.log(event);
-
+      const { unsubscribe } = await stationSDK.subscribe((event) => {
         dispatchReaderAction({
           type: "apply-event",
           payload: event,

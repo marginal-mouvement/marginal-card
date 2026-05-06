@@ -1,9 +1,5 @@
-export interface SimpleTransfer {
-  id: string;
-  userId: string;
-  amount: number;
-  label: string;
-  thumbnailUrl?: string;
-  kind: "credit" | "debit";
-  date: Date;
-}
+import type { z } from "zod";
+
+import type { SimpleTransferSchema } from "./transfer.schemas";
+
+export type SimpleTransfer = z.infer<typeof SimpleTransferSchema>;

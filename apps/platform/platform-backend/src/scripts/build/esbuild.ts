@@ -14,7 +14,7 @@ const EXTERNAL_DEPS: PickedDependencies = ["@hono/node-server", "hono"];
 
 const env = fs.readFileSync("./.env", "utf-8");
 
-async function main() {
+async function buildWithEsbuild() {
   const buildDest = Environment.get("BUILD_DEST");
 
   await build({
@@ -50,4 +50,4 @@ async function main() {
   fs.writeFileSync(`${buildDest}/.env`, env);
 }
 
-execute(main);
+execute(buildWithEsbuild);

@@ -1,2 +1,2 @@
 export type * from "./transfer.shapes";
-export type * from "./transfer.contracts";
+export { TransferApi } from "./transfer.api";

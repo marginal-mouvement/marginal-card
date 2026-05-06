@@ -1,11 +1,11 @@
-import type { StationSubscriptionTopics } from "@marginal-card/station-sdk";
+import type { AnyStationSnapshot } from "@marginal-card/station-sdk";
 
 import type { ReaderAction, ReaderDict } from "@/core/reader/types.ts";
 
 export class Readers {
   static applyEvent(
     readers: ReaderDict,
-    event: StationSubscriptionTopics["reader:*"],
+    event: AnyStationSnapshot,
   ): ReaderDict {
     if (event.name === "ReaderConnected") {
       return {

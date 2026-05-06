@@ -36,7 +36,7 @@ export const ReaderRead = ({ readerId }: ReaderReadProps) => {
       return;
     }
 
-    const user = await platformSDK.user.byKey(reader.keyId).catch((e) => {
+    const user = await platformSDK.user.getByKey(reader.keyId).catch((e) => {
       dispatchReaderAction({
         type: "unlock-reader",
         payload: {

@@ -26,7 +26,7 @@ export const Menu = () => {
               value="/"
             >
               <Key />
-              <p className="mt-0.5 text-[13px]">Gate</p>
+              <p className="mt-0.5 text-[13px]">Ma clé</p>
             </TabsTrigger>
           </Link>
 

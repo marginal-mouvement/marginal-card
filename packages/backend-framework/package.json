@@ -5,6 +5,9 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@ddd-ts/core": "^0.0.35",
     "@ddd-ts/shape": "^0.0.35",
@@ -13,10 +16,11 @@
     "hono": "^4.12.5",
     "mongodb": "^7.1.0",
     "ulid": "^3.0.2",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@marginal-card/sdk": "workspace:*"
   },
   "devDependencies": {
     "@ddd-ts/types": "^0.0.35",
-    "@marginal-card/types": "workspace:*"
+    "@marginal-card/sdk": "workspace:*"
   }
 }
