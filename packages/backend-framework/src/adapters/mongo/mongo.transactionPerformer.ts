@@ -6,7 +6,6 @@ import type { TransactionPerformer } from "../../core";
 import { InfrastructureError, Logger } from "../../core";
 import type { TransactionEffect } from "../../core/store/transaction";
 
-
 function hasLabel(err: unknown, label: string): boolean {
   const anyErr = err as any;
   const labels: string[] | undefined = anyErr?.errorLabels;
@@ -24,7 +23,7 @@ function isTransientTransactionError(err: unknown): boolean {
 export class MongoTransactionPerformer implements TransactionPerformer {
   private readonly client: MongoClient;
 
-  private readonly logger = Logger.for(MongoTransactionPerformer);
+  private readonly logger = Logger.for("MongoTransactionPerformer");
 
   constructor(private readonly db: Db) {
     this.client = db.client;

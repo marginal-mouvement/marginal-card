@@ -1,7 +1,5 @@
-export interface SimpleShow {
-  id: string;
-  name: string;
-  reward: number;
-  date: string;
-  thumbnailUrl?: string;
-}
+import type { z } from "zod";
+
+import type { SimpleShowSchema } from "./show.schemas";
+
+export type SimpleShow = z.infer<typeof SimpleShowSchema>;

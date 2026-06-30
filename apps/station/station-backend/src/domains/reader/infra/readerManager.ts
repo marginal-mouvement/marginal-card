@@ -5,7 +5,7 @@ import type {
   SubscriptionRegistry,
 } from "@marginal-card/backend-framework";
 import { InfrastructureError, Logger } from "@marginal-card/backend-framework";
-import type { StationSubscriptionTopics } from "@marginal-card/station-sdk";
+import type { StationTopics } from "@marginal-card/station-sdk";
 
 import type { UriPrefix } from "./utils/uriPrefix";
 import { MarginalisedReader } from "./marginalisedReader";
@@ -17,13 +17,13 @@ export class ReaderManager {
   constructor(
     private readonly uriPrefix: UriPrefix,
     private readonly path: string,
-    private readonly subscriptionRegistry: SubscriptionRegistry<StationSubscriptionTopics>,
+    private readonly subscriptionRegistry: SubscriptionRegistry<StationTopics>,
     private readonly dateTimeService: DatetimeService,
   ) {}
 
   private readonly readers: Map<string, MarginalisedReader> = new Map();
 
-  private readonly logger = Logger.for(ReaderManager);
+  private readonly logger = Logger.for("ReaderManager");
 
   async register(reader: Reader) {
     const now = this.dateTimeService.now();
@@ -39,7 +39,7 @@ export class ReaderManager {
       this.logger.error(`Reader '${marginalisedReader.name}'`, e);
 
       this.subscriptionRegistry.publish(
-        ["reader:*"],
+        ["reader*"],
         ReaderSubscriptionEvent.UnknownError(marginalisedReader.id, e, now),
       );
     });
@@ -47,7 +47,7 @@ export class ReaderManager {
     reader.on("end", () => this.unregister(marginalisedReader));
 
     await this.subscriptionRegistry.publish(
-      ["reader:*"],
+      ["reader*"],
       ReaderSubscriptionEvent.Connected(
         marginalisedReader.id,
         marginalisedReader.name,
@@ -60,7 +60,7 @@ export class ReaderManager {
     const now = this.dateTimeService.now();
 
     await this.subscriptionRegistry.publish(
-      ["reader:*"],
+      ["reader*"],
       ReaderSubscriptionEvent.KeyOn(reader.id, now),
     );
     await this.read(reader);
@@ -69,7 +69,7 @@ export class ReaderManager {
   private async onCardOff(reader: MarginalisedReader) {
     const now = this.dateTimeService.now();
     await this.subscriptionRegistry.publish(
-      ["reader:*"],
+      ["reader*"],
       ReaderSubscriptionEvent.KeyOff(reader.id, now),
     );
   }
@@ -82,7 +82,7 @@ export class ReaderManager {
 
       if (!keyId) {
         await this.subscriptionRegistry.publish(
-          ["reader:*"],
+          ["reader*"],
           ReaderSubscriptionEvent.NoTagRead(reader.id, now),
         );
 
@@ -93,13 +93,13 @@ export class ReaderManager {
         `Reader ${reader.id.serialize()} Key read (${keyId.serialize()})`,
       );
       await this.subscriptionRegistry.publish(
-        ["reader:*"],
+        ["reader*"],
         ReaderSubscriptionEvent.KeyIdRead(reader.id, keyId.serialize(), now),
       );
     } catch (e) {
       this.logger.error(`Reader '${reader.id}'`, e);
       await this.subscriptionRegistry.publish(
-        ["reader:*"],
+        ["reader*"],
         ReaderSubscriptionEvent.ReadFailed(
           reader.id,
           e instanceof Error ? e.message : "Unknown error",
@@ -137,7 +137,7 @@ export class ReaderManager {
     this.readers.delete(reader.id.serialize());
     this.logger.warn(`Unregistered reader "${reader.name}"`);
     await this.subscriptionRegistry.publish(
-      ["reader:*"],
+      ["reader*"],
       ReaderSubscriptionEvent.Disconnected(reader.id, now),
     );
   }

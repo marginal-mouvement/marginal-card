@@ -1,8 +1,5 @@
-export interface SimpleUser {
-  id: string;
-  name: string;
-  email: string;
-  balance: number;
-  visitedShows: string[];
-  emailConfirmed: boolean;
-}
+import type { z } from "zod";
+
+import type { SimpleUserSchema } from "./user.schemas";
+
+export type SimpleUser = z.Infer<typeof SimpleUserSchema>;

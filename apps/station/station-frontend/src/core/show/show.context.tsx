@@ -5,18 +5,15 @@ import {
   useMemo,
   useState,
 } from "react";
-import type {
-  CreateShowContract,
-  SimpleShow,
-} from "@marginal-card/platform-sdk";
-import type { PayloadOf } from "@marginal-card/types";
+import { ShowApi, type SimpleShow } from "@marginal-card/platform-sdk";
+import type { PayloadOf } from "@marginal-card/sdk";
 
 import { platformSDK } from "@/core/platform/platformSDK.ts";
 
 interface ShowContext {
   shows: SimpleShow[];
   showsLoading: boolean;
-  createShow: (payload: PayloadOf<CreateShowContract>) => Promise<void>;
+  createShow: (payload: PayloadOf<typeof ShowApi.Create>) => Promise<void>;
   fetchShows: () => void;
   fetchError?: Error;
   retry: () => void;
@@ -38,26 +35,26 @@ export const ShowContextProvider = ({ children }: PropsWithChildren) => {
     }
 
     setFetchInitiated(true);
-    platformSDK.show
-      .all()
+    platformSDK
+      .use(ShowApi.AllShows)
       .then((res) => {
         setShowsLoading(false);
-        setShows(res);
+        setShows(res.shows);
       })
       .catch((err) => {
+        console.log(err);
         setFetchError(err);
       });
   }, [fetchInitiated]);
 
   const retry = useCallback(() => {
-    console.log("here");
     setShowsLoading(true);
     setFetchInitiated(false);
     setFetchError(undefined);
   }, []);
 
   const createShow = useCallback(
-    async (payload: PayloadOf<CreateShowContract>) => {
+    async (payload: PayloadOf<typeof ShowApi.Create>) => {
       const show = await platformSDK.show.create(payload);
       setShows((shows) =>
         shows.some((s) => s.id === show.id) ? shows : [...shows, show],

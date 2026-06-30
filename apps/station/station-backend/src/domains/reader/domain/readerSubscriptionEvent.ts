@@ -1,4 +1,4 @@
-import type { StationSubscriptionTopics } from "@marginal-card/station-sdk";
+import type { AnyStationSnapshot } from "@marginal-card/station-sdk";
 
 import type { ReaderId } from "./readerId";
 
@@ -62,9 +62,4 @@ export const ReaderSubscriptionEvent = {
     payload: { readerId: readerId.serialize() },
     at,
   }),
-} as const satisfies Record<
-  string,
-  (
-    ...params: any[]
-  ) => StationSubscriptionTopics[keyof StationSubscriptionTopics]
->;
+} as const satisfies Record<string, (...params: any[]) => AnyStationSnapshot>;

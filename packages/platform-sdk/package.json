@@ -5,10 +5,11 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "dependencies": {
-    "@marginal-card/sdk": "workspace:*"
+  "scripts": {
+    "typecheck": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@marginal-card/types": "workspace:*"
+  "dependencies": {
+    "@marginal-card/sdk": "workspace:*",
+    "zod": "^4.3.6"
   }
 }

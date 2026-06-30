@@ -5,7 +5,10 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
-    "@marginal-card/types": "workspace:*"
+    "zod": "^4.3.6"
   }
 }

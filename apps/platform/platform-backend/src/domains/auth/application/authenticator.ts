@@ -45,7 +45,7 @@ export class Authenticator {
     session.ensureIsUsable(now);
 
     return new Actor(
-      session.userId ?? UserId.platform(),
+      session.userId ?? UserId.station(),
       session.permission,
       "session",
     );

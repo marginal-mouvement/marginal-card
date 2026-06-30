@@ -1,29 +1,22 @@
-import { SDK } from "@marginal-card/sdk";
-import type { PayloadOf } from "@marginal-card/types";
+import { type PayloadOf, SDK } from "@marginal-card/sdk";
 
-import type { CreateKeyContract, IsKeyAvailableContract } from "./key";
-import type {
-  ClaimKeyContract,
-  CreditUserContract,
-  DebitUserContract,
-  MeContract,
-  UserByKeyContract,
-} from "./user";
-import type { AllShowsContract, CreateShowContract } from "./show";
-import type { AllMyTransfersContract } from "./transfer";
+import { KeyApi } from "./key";
+import { UserApi } from "./user";
+import { ShowApi } from "./show";
+import { TransferApi } from "./transfer";
 
 class KeyService {
   constructor(private readonly sdk: SDK) {}
 
   create(showId?: string) {
-    return this.sdk.fetch<CreateKeyContract>("/key/create", "POST", {
+    return this.sdk.use(KeyApi.Create, {
       showId,
     });
   }
 
   async isAvailable(keyId: string) {
     return (
-      await this.sdk.fetch<IsKeyAvailableContract>("/key/available", "POST", {
+      await this.sdk.use(KeyApi.IsAvailable, {
         keyId,
       })
     ).available;
@@ -33,36 +26,36 @@ class KeyService {
 class UserService {
   constructor(private readonly sdk: SDK) {}
 
-  claimKey(payload: PayloadOf<ClaimKeyContract>) {
-    return this.sdk.fetch<ClaimKeyContract>("/user/claim-key", "POST", payload);
+  claimKey(payload: PayloadOf<typeof UserApi.ClaimKey>) {
+    return this.sdk.use(UserApi.ClaimKey, payload);
   }
 
   me() {
-    return this.sdk.fetch<MeContract>("/user/me", "GET", undefined);
+    return this.sdk.use(UserApi.Me, undefined);
   }
 
-  byKey(keyId: string) {
-    return this.sdk.fetch<UserByKeyContract>("/user/by-key", "POST", { keyId });
+  getByKey(keyId: string) {
+    return this.sdk.use(UserApi.GetByKey, { keyId });
   }
 
-  debit(payload: PayloadOf<DebitUserContract>) {
-    return this.sdk.fetch<DebitUserContract>("/user/debit", "POST", payload);
+  debit(payload: PayloadOf<typeof UserApi.Debit>) {
+    return this.sdk.use(UserApi.Debit, payload);
   }
 
-  credit(payload: PayloadOf<CreditUserContract>) {
-    return this.sdk.fetch<CreditUserContract>("/user/credit", "POST", payload);
+  credit(payload: PayloadOf<typeof UserApi.Credit>) {
+    return this.sdk.use(UserApi.Credit, payload);
   }
 }
 
 class ShowService {
   constructor(private readonly sdk: SDK) {}
 
-  create(payload: PayloadOf<CreateShowContract>) {
-    return this.sdk.fetch<CreateShowContract>("/show/create", "POST", payload);
+  create(payload: PayloadOf<typeof ShowApi.Create>) {
+    return this.sdk.use(ShowApi.Create, payload);
   }
 
   all() {
-    return this.sdk.fetch<AllShowsContract>("/show/all", "GET", undefined);
+    return this.sdk.use<typeof ShowApi.AllShows>(ShowApi.AllShows, undefined);
   }
 }
 
@@ -70,11 +63,7 @@ class TransferService {
   constructor(private readonly sdk: SDK) {}
 
   allMines() {
-    return this.sdk.fetch<AllMyTransfersContract>(
-      "/transfer/my",
-      "GET",
-      undefined,
-    );
+    return this.sdk.use(TransferApi.AllMines, undefined);
   }
 }
 
@@ -84,7 +73,45 @@ export class PlatformSDK extends SDK {
   readonly show = new ShowService(this);
   readonly transfer = new TransferService(this);
 
+  private apiKey: string | undefined;
+  private keyId: string | undefined;
+
   constructor(baseUrl: string) {
     super(baseUrl);
+  }
+
+  loginByApiKey(apiKey: string | undefined) {
+    this.apiKey = apiKey;
+    return this;
+  }
+
+  loginByKey(keyId: string | undefined) {
+    this.keyId = keyId;
+    return this;
+  }
+
+  seemsAuthenticated() {
+    return this.apiKey !== undefined || this.keyId !== undefined;
+  }
+
+  logout() {
+    this.apiKey = undefined;
+    this.keyId = undefined;
+  }
+
+  prepareHeaders(): HeadersInit {
+    if (this.apiKey) {
+      return {
+        "X-API-KEY": this.apiKey,
+      };
+    }
+
+    if (this.keyId) {
+      return {
+        "X-KEY-ID": this.keyId,
+      };
+    }
+
+    return {};
   }
 }

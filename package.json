@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "author": "aurere",
   "license": "MIT",
+  "scripts": {
+    "station-backend": "pnpm -r --filter @marginal-card/station-backend",
+    "station-frontend": "pnpm -r --filter @marginal-card/station-frontend",
+    "platform-backend": "pnpm -r --filter @marginal-card/platform-backend",
+    "platform-frontend": "pnpm -r --filter @marginal-card/platform-frontend",
+    "sdk": "pnpm -r --filter @marginal-card/sdk",
+    "station-sdk": "pnpm -r --filter @marginal-card/sdk",
+    "platform-sdk": "pnpm -r --filter @marginal-card/sdk",
+    "backend-framework": "pnpm -r --filter @marginal-card/backend-framework",
+    "all:typecheck": "pnpm -r --filter @marginal-card/* typecheck"
+  },
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.39.2",

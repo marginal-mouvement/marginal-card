@@ -1,21 +1,16 @@
-import type { SubscriptionEvent } from "@marginal-card/types";
+import type { Topics } from "@marginal-card/sdk";
 
 import type { SubscriptionId } from "../value";
 import { parallel } from "../concurrency";
 import { ApplicationError } from "../error";
 import type { DatetimeService } from "../misc";
 
-type Handler<E extends SubscriptionEvent<any, any>> = (
-  message: E,
-) => Promise<void>;
+type AnyHandler = (message: any) => Promise<void>;
 
-interface Channel<E extends SubscriptionEvent<any, any>> {
-  handler: Handler<E>;
+interface Channel {
+  handler: AnyHandler;
   token: symbol;
 }
-
-type AnyEvent<T extends { [key: string]: SubscriptionEvent<any, any> }> =
-  T[keyof T];
 
 interface SubscriptionManifest {
   id: SubscriptionId;
@@ -24,15 +19,17 @@ interface SubscriptionManifest {
   detachedAt?: number;
 }
 
-export class SubscriptionRegistry<
-  T extends { [key: string]: SubscriptionEvent<any, any> },
-> {
+type TypedHandler<T extends Topics<any, any>> = (
+  message: T[keyof T],
+) => Promise<void>;
+
+export class SubscriptionRegistry<T extends Topics<any, any>> {
   constructor(private readonly dateTimeService: DatetimeService) {}
 
   private static DetachedSubscriptionMaxAge = 1000 * 60;
 
   private readonly subscriptions = new Map<string, SubscriptionManifest>();
-  private readonly channels = new Map<string, Channel<AnyEvent<T>>>();
+  private readonly channels = new Map<string, Channel>();
   private readonly topicToSubs = new Map<keyof T, Set<string>>();
   private readonly subToTopics = new Map<string, Set<keyof T>>();
 
@@ -45,7 +42,7 @@ export class SubscriptionRegistry<
     });
   }
 
-  registerHandler(id: SubscriptionId, handler: Handler<T[keyof T]>) {
+  registerHandler(id: SubscriptionId, handler: TypedHandler<T>) {
     const token = Symbol();
 
     const subscriptionManifest = this.subscriptions.get(id.serialize());
@@ -61,6 +58,7 @@ export class SubscriptionRegistry<
       handler,
       token,
     });
+
     return token;
   }
 

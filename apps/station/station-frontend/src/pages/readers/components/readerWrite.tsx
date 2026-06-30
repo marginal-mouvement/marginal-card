@@ -1,5 +1,6 @@
 import { type ReactNode, use, useCallback, useEffect, useState } from "react";
 import { CircleCheck, CircleSlash, Plus, RotateCcw } from "lucide-react";
+import { ReaderApi } from "@marginal-card/station-sdk";
 
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useReader } from "@/core/reader/useReader.ts";
@@ -61,7 +62,7 @@ export const ReaderWrite = ({ readerId }: ReaderWriteProps) => {
       showId.trim() ? showId.trim() : undefined,
     );
     setStatus("uploading");
-    await stationSDK.reader.writeKey(keyId, readerId);
+    await stationSDK.use(ReaderApi.WriteKeyId, { keyId, readerId });
     setStatus("success");
   }, [readerId, showId]);
 

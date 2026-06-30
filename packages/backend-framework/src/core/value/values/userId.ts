@@ -5,7 +5,7 @@ export class UserId extends Id("usr") {
     return new UserId("usr_ROOT");
   }
 
-  static platform() {
-    return new UserId("usr_PLATFORM");
+  static station() {
+    return new UserId("usr_STATION");
   }
 }

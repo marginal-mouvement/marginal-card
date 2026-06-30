@@ -1,8 +1,5 @@
-import type {
-  GetReadersContract,
-  StationSubscriptionTopics,
-} from "@marginal-card/station-sdk";
-import type { ResultOf } from "@marginal-card/types";
+import type { ReaderApi, AnyStationSnapshot } from "@marginal-card/station-sdk";
+import type { ResultOf } from "@marginal-card/sdk";
 
 export interface Reader {
   id: string;
@@ -10,17 +7,17 @@ export interface Reader {
   keyPresence: boolean;
   locked: boolean;
   keyId: string | undefined;
-  lastEvent: StationSubscriptionTopics["reader:*"]["name"] | undefined;
+  lastEvent: AnyStationSnapshot | undefined;
 }
 
 interface FetchInitialDataAction {
   type: "fetch-initial-data";
-  payload: ResultOf<GetReadersContract>;
+  payload: ResultOf<typeof ReaderApi.GetAll>;
 }
 
 interface ApplyEventAction {
   type: "apply-event";
-  payload: StationSubscriptionTopics["reader:*"];
+  payload: AnyStationSnapshot;
 }
 
 interface LockReaderAction {

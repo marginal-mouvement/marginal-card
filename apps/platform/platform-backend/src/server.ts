@@ -1,17 +1,18 @@
+import type { Context } from "hono";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { logger } from "hono/logger";
 import {
   Environment,
-  Exception,
-  InfrastructureError,
+  handleError,
   Logger,
 } from "@marginal-card/backend-framework";
 import { cors } from "hono/cors";
 import { serveStatic } from "@hono/node-server/serve-static";
 
 import { globalBoot } from "./boot/globalBoot";
-import { bootEndpoints } from "./endpoints/bootEndpoints";
+import { bootRoutes } from "./boot/bootRoutes";
+import { HonoRequestContext } from "./domains/auth/infra/hono.requestContext";
 
 const app = new Hono();
 
@@ -22,23 +23,12 @@ const oops = Logger.for("Server");
 
 const { intentBus, authenticator } = globalBoot();
 
-app.route("/api", bootEndpoints(authenticator, intentBus));
+const authenticateFunction = (ctx: Context) =>
+  authenticator.authenticate(new HonoRequestContext(ctx));
 
-app.onError((err, ctx) => {
-  oops.error(err);
-  if (err instanceof Exception) {
-    const response = err.toResponse();
-    ctx.status(response.getStatus() as any);
-    return ctx.json(response.serialize());
-  }
+app.route("/api", bootRoutes(intentBus, authenticateFunction));
 
-  ctx.status(500);
-  return ctx.json(
-    InfrastructureError.because("Unexpected internal error")
-      .toResponse()
-      .serialize(),
-  );
-});
+app.onError(handleError(oops));
 
 const FRONTEND_RELATIVE_PATH = Environment.get("FRONTEND_RELATIVE_PATH");
 

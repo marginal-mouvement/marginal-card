@@ -8,7 +8,7 @@ import { Content } from "@/parts/content.tsx";
 import { RegisterForm } from "@/pages/register/register.form.tsx";
 
 export const RegisterPage = () => {
-  const { setKeyId } = use(AuthContext);
+  const { login } = use(AuthContext);
   const { keyId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +23,7 @@ export const RegisterPage = () => {
       const isAvailable = await platformSDK.key.isAvailable(keyId);
 
       if (!isAvailable) {
-        setKeyId(keyId);
+        login(keyId).catch(console.error);
         return;
       }
 
@@ -33,7 +33,7 @@ export const RegisterPage = () => {
     fetchKeyStatus().catch(() => {
       navigate("/");
     });
-  }, [keyId, navigate, setKeyId]);
+  }, [keyId, login, navigate]);
 
   if (isLoading) {
     return <FullPageSpinner />;
