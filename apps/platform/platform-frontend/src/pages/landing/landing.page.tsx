@@ -1,5 +1,5 @@
-import { Content } from "@/parts/content.tsx";
-import key from "@/assets/key.png";
+import key from "../../assets/key.png";
+import { Content } from "../../parts/content.tsx";
 
 export const LandingPage = () => {
   return (

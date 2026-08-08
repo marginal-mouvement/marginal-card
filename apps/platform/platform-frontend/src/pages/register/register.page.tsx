@@ -1,11 +1,12 @@
 import { useNavigate, useParams } from "react-router";
 import { use, useEffect, useState } from "react";
 
-import { AuthContext } from "@/modules/auth/auth.context.tsx";
-import { platformSDK } from "@/modules/platform/platformSDK.ts";
-import { FullPageSpinner } from "@/pages/fullPageSpinner.tsx";
-import { Content } from "@/parts/content.tsx";
-import { RegisterForm } from "@/pages/register/register.form.tsx";
+import { RegisterForm } from "./register.form.tsx";
+
+import { AuthContext } from "../../modules/auth/auth.context.tsx";
+import { platformSDK } from "../../modules/platform/platformSDK.ts";
+import { FullPageSpinner } from "../fullPageSpinner.tsx";
+import { Content } from "../../parts/content.tsx";
 
 export const RegisterPage = () => {
   const { login } = use(AuthContext);
