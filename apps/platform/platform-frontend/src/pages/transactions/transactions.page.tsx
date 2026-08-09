@@ -1,10 +1,6 @@
 import { use, useEffect } from "react";
 import { Minus, Plus } from "lucide-react";
-
-import { Header } from "@/parts/header.tsx";
-import { Content } from "@/parts/content.tsx";
-import { TransferContext } from "@/modules/transfer/transfer.context.tsx";
-import { Spinner } from "@/components/ui/spinner.tsx";
+import { Spinner } from "@marginal.credit/ui/spinner.tsx";
 import {
   Item,
   ItemActions,
@@ -12,14 +8,18 @@ import {
   ItemDescription,
   ItemMedia,
   ItemTitle,
-} from "@/components/ui/item.tsx";
+} from "@marginal.credit/ui/item.tsx";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar.tsx";
-import { DateFormatter } from "@/lib/utils.ts";
-import { Badge } from "@/components/ui/badge.tsx";
+} from "@marginal.credit/ui/avatar.tsx";
+import { Badge } from "@marginal.credit/ui/badge.tsx";
+
+import { Content } from "../../parts/content.tsx";
+import { TransferContext } from "../../modules/transfer/transfer.context.tsx";
+import { Header } from "../../parts/header.tsx";
+import { DateFormatter } from "../../lib/dateFormatter.ts";
 
 export const TransactionsPage = () => {
   const { loadMyTransfers, transfers, areTransfersLoading } =

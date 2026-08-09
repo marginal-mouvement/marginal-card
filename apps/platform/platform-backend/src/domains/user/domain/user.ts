@@ -1,5 +1,5 @@
 import { EsAggregate, EsEvent, On } from "@ddd-ts/core";
-import { DomainError, UserId } from "@marginal-card/backend-framework";
+import { DomainError, UserId } from "@marginal.credit/backend-framework";
 import { Multiple, Optional } from "@ddd-ts/shape";
 
 import { Email } from "./email";
