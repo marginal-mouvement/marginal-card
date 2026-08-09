@@ -1,4 +1,4 @@
-import { DomainError, KeyId, UserId } from "@marginal-card/backend-framework";
+import { DomainError, KeyId, UserId } from "@marginal.credit/backend-framework";
 import { Optional, Shape } from "@ddd-ts/shape";
 
 import { ShowId } from "../../show/domain/showId";

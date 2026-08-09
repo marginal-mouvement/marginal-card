@@ -1,22 +1,22 @@
 import { Key } from "lucide-react";
-import { use, useState } from "react";
-import { UserRegex } from "@marginal-card/platform-sdk";
-
+import { useState } from "react";
+import { UserRegex } from "@marginal.credit/platform-sdk";
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/field.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { FormValidator } from "@/hooks/formValidator/formValidator.ts";
-import { FormField } from "@/hooks/formValidator/formField.ts";
-import { useStateRef } from "@/hooks/useStateRef.ts";
-import { Kbd } from "@/components/ui/kbd.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { platformSDK } from "@/modules/platform/platformSDK.ts";
-import { AuthContext } from "@/modules/auth/auth.context.tsx";
-import { Spinner } from "@/components/ui/spinner.tsx";
+} from "@marginal.credit/ui/field.tsx";
+import { Input } from "@marginal.credit/ui/input.tsx";
+import { Kbd } from "@marginal.credit/ui/kbd.tsx";
+import { Button } from "@marginal.credit/ui/button.tsx";
+import { Spinner } from "@marginal.credit/ui/spinner.tsx";
+
+import { FormField } from "../../hooks/formValidator/formField.ts";
+import { FormValidator } from "../../hooks/formValidator/formValidator.ts";
+import { useStateRef } from "../../hooks/useStateRef.ts";
+// import { AuthContext } from "../../modules/auth/auth.context.tsx";
+import { platformSDK } from "../../modules/platform/platformSDK.ts";
 
 const registerValidator = new FormValidator({
   name: FormField.text("Nom", true)
@@ -51,7 +51,7 @@ export const RegisterForm = ({ keyId }: RegisterFormProps) => {
     state: [refererName, setRefererName],
   } = useStateRef("");
 
-  const { setKeyId, refreshAuth } = use(AuthContext);
+  // const { setKeyId, refreshAuth } = use(AuthContext);
 
   const { errors, setErrors, hasErrors } = registerValidator.useErrors();
 
@@ -100,8 +100,8 @@ export const RegisterForm = ({ keyId }: RegisterFormProps) => {
         email: sanitized.email,
         refererName: sanitized.refererName,
       });
-      setKeyId(keyId);
-      refreshAuth();
+      // setKeyId(keyId);
+      // refreshAuth();
     } catch {
       setIsLoading(false);
     }

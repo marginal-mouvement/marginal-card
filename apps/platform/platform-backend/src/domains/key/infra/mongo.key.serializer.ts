@@ -1,5 +1,5 @@
 import type { ISerializer } from "@ddd-ts/core";
-import { KeyId, UserId } from "@marginal-card/backend-framework";
+import { KeyId, UserId } from "@marginal.credit/backend-framework";
 
 import { Key } from "../domain/key";
 import { ShowId } from "../../show/domain/showId";

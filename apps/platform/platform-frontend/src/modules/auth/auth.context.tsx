@@ -1,4 +1,4 @@
-import type { SimpleUser } from "@marginal-card/platform-sdk";
+import type { SimpleUser } from "@marginal.credit/platform-sdk";
 import {
   createContext,
   type PropsWithChildren,
@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 
-import { KeyStore } from "@/modules/key/key.store.ts";
-import { platformSDK } from "@/modules/platform/platformSDK.ts";
+import { platformSDK } from "../platform/platformSDK.ts";
+import { KeyStore } from "../key/key.store.ts";
 
 interface AuthContextValue {
   isLoading: boolean;
@@ -42,7 +42,9 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
         KeyStore.save(keyId);
       }
 
-      if (!platformSDK.seemsAuthenticated()) {
+      const seemsAuth = platformSDK.seemsAuthenticated();
+
+      if (!seemsAuth) {
         logout();
         return;
       }
