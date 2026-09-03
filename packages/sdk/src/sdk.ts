@@ -100,6 +100,9 @@ export abstract class SDK {
     }
 
     if (contract.outputSchema) {
+      if (contract.path === "/show/all") {
+        (response.data as any) = { shows: response.data };
+      }
       return contract.outputSchema.parse(response.data) as ResultOf<T>;
     }
 

@@ -1,8 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import { use, useEffect, useState } from "react";
 
-import { RegisterForm } from "./register.form.tsx";
-
 import { AuthContext } from "../../modules/auth/auth.context.tsx";
 import { platformSDK } from "../../modules/platform/platformSDK.ts";
 import { FullPageSpinner } from "../fullPageSpinner.tsx";
@@ -43,7 +41,7 @@ export const RegisterPage = () => {
   return (
     <Content>
       <div className="flex flex-col justify-center h-svh">
-        <RegisterForm keyId={keyId} />
+        {/*<RegisterForm keyId={keyId} />*/}
       </div>
     </Content>
   );
